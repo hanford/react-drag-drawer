@@ -1,0 +1,51 @@
+{
+  "name": "react-drag-drawer",
+  "version": "0.0.1",
+  "description": "Draggable react drawer",
+  "main": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hanford/react-drag-drawer.git"
+  },
+  "homepage": "https://github.com/hanford/react-drag-drawer",
+  "bugs": "https://github.com/hanford/react-drag-drawer/issues",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "authors": [
+    "Jack Hanford"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "~6.24.1",
+    "babel-loader": "~6.4.1",
+    "babel-preset-react": "~6.24.1",
+    "react": "~15.5.3",
+    "react-dom": "~15.5.3",
+    "styled-jsx": "~0.5.7",
+    "webpack": "~2.3.3"
+  },
+  "dependencies": {
+    "global": "~4.3.1",
+    "react-motion": "~0.4.7"
+  },
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "tags": [
+    "react",
+    "drawer",
+    "draggable",
+    "drag drawer"
+  ],
+  "keywords": [
+    "react",
+    "react-component",
+    "drawer",
+    "draggable"
+  ]
+}
