@@ -706,23 +706,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_global_document__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_global_document___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_global_document__);
 
-/**
- * This microcomponent is a modal on desktop and a Y-swipeable drawer on mobile
- */
 
 
 
 
 
-// import style from './style.css'
-
-// Background opacity controls the darkness of the overlay background. More means a darker background.
-
-class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
+class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
   constructor(props) {
     super(props);
 
     this.drawer = null;
+
     this.state = {
       open: props.open,
       thumbY: 0,
@@ -731,6 +725,15 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
       touching: false
     };
 
+    this.propTypes = {
+      open: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].bool.isRequired,
+      children: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].oneOfType([__WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object, __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array]).isRequired,
+      onRequestClose: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func.isRequired,
+      onDrag: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func,
+      negativeScroll: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].number
+    };
+
+    // Background opacity controls the darkness of the overlay background. More means a darker background.
     this.BACKGROUND_OPACITY = 0.6;
     this.NEGATIVE_SCROLL = props.negativeScroll || -195;
     this.SCROLL_TO_CLOSE = 50;
@@ -769,13 +772,26 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
 
     // in the process of opening the drawer
     if (!this.props.open && nextProps.open) {
-      this.setState({ open: true });
+      this.setState(() => {
+
+        return {
+          open: true
+        };
+      });
     }
 
     // in the process of closing the drawer
     if (this.props.open && !nextProps.open) {
       this.removeListeners();
-      setTimeout(() => this.setState({ open: false }), 300);
+
+      setTimeout(() => {
+        console.log('hello');
+        this.setState(() => {
+          return {
+            open: false
+          };
+        });
+      }, 300);
     }
   }
 
@@ -786,7 +802,14 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
   componentWillUnmount() {
     // incase user navigated directly to checkout
     this.removeListeners();
-    this.setState({ position: 0, thumbY: 0, touching: false });
+
+    this.setState(() => {
+      return {
+        position: 0,
+        thumbY: 0,
+        touching: false
+      };
+    });
   }
 
   attachListeners() {
@@ -817,10 +840,13 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
 
   onTouchStart(event) {
     const startY = event.touches[0].pageY;
-    this.setState({
-      thumbY: startY,
-      startThumbY: startY,
-      touching: true
+
+    this.setState(() => {
+      return {
+        thumbY: startY,
+        startThumbY: startY,
+        touching: true
+      };
     });
   }
 
@@ -842,7 +868,12 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
-    this.setState({ touch: false });
+    this.setState(() => {
+      return {
+        touch: false
+      };
+    });
+
     if (this.state.position >= 0 && this.state.thumbY - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
       this.hideDrawer();
     }
@@ -855,17 +886,33 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
     // and finally route back to whichever URL we're at without the drawer.
     // (for the product page case, we're returning to /menu)
     this.props.onRequestClose();
+
     setTimeout(() => {
-      this.setState({ open: false, thumbY: 0, position: 0, touching: false });
+      this.setState(() => {
+        return {
+          open: false,
+          thumbY: 0,
+          position: 0,
+          touching: false
+        };
+      });
     }, 300);
   }
 
   updateThumbY(thumbPosition) {
-    this.setState({ thumbY: thumbPosition });
+    this.setState(() => {
+      return {
+        thumbY: thumbPosition
+      };
+    });
   }
 
   updatePosition(delta) {
-    this.setState({ position: this.state.position + delta });
+    this.setState(() => {
+      return {
+        position: this.state.position + delta
+      };
+    });
   }
 
   render() {
@@ -890,10 +937,16 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
 
     return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
       __WEBPACK_IMPORTED_MODULE_2_react_motion__["Motion"],
-      { style: {
+      {
+        style: {
           translateY: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_motion__["spring"])(open ? position : __WEBPACK_IMPORTED_MODULE_3_global_window___default.a.innerHeight, animationSpring),
           opacity: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_motion__["spring"])(open ? this.BACKGROUND_OPACITY : 0)
-        } },
+        },
+        defaultStyle: {
+          opacity: 0,
+          translateY: __WEBPACK_IMPORTED_MODULE_3_global_window___default.a.innerHeight
+        }
+      },
       ({ translateY, opacity }) => {
         return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
           'div',
@@ -925,14 +978,6 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react___default.a.Component {
 }
 /* harmony export (immutable) */ __webpack_exports__["default"] = Drawer;
 
-
-Drawer.propTypes = {
-  children: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].oneOfType([__WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object, __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array]).isRequired,
-  onRequestClose: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func.isRequired,
-  open: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].bool.isRequired,
-  onDrag: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func,
-  negativeScroll: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].number
-};
 
 /***/ }),
 /* 26 */

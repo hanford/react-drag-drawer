@@ -1,20 +1,14 @@
-/**
- * This microcomponent is a modal on desktop and a Y-swipeable drawer on mobile
- */
-import React, { PropTypes } from 'react'
+import React, { PropTypes, Component } from 'react'
 import { Motion, spring, presets } from 'react-motion'
 import window from 'global/window'
 import document from 'global/document'
 
-// import style from './style.css'
-
-// Background opacity controls the darkness of the overlay background. More means a darker background.
-
-export default class Drawer extends React.Component {
+export default class Drawer extends Component {
   constructor (props) {
     super(props)
 
     this.drawer = null
+
     this.state = {
       open: props.open,
       thumbY: 0,
@@ -23,6 +17,7 @@ export default class Drawer extends React.Component {
       touching: false
     }
 
+    // Background opacity controls the darkness of the overlay background. More means a darker background.
     this.BACKGROUND_OPACITY = 0.6
     this.NEGATIVE_SCROLL = props.negativeScroll || -195
     this.SCROLL_TO_CLOSE = 50
@@ -61,13 +56,24 @@ export default class Drawer extends React.Component {
 
     // in the process of opening the drawer
     if (!this.props.open && nextProps.open) {
-      this.setState({open: true})
+      this.setState(() => {
+        return {
+          open: true
+        }
+      })
     }
 
     // in the process of closing the drawer
     if (this.props.open && !nextProps.open) {
       this.removeListeners()
-      setTimeout(() => this.setState({open: false}), 300)
+
+      setTimeout(() => {
+        this.setState(() => {
+          return {
+            open: false
+          }
+        })
+      }, 300)
     }
   }
 
@@ -78,7 +84,14 @@ export default class Drawer extends React.Component {
   componentWillUnmount () {
     // incase user navigated directly to checkout
     this.removeListeners()
-    this.setState({ position: 0, thumbY: 0, touching: false })
+
+    this.setState(() => {
+      return {
+        position: 0,
+        thumbY: 0,
+        touching: false
+      }
+    })
   }
 
   attachListeners () {
@@ -109,10 +122,13 @@ export default class Drawer extends React.Component {
 
   onTouchStart (event) {
     const startY = event.touches[0].pageY
-    this.setState({
-      thumbY: startY,
-      startThumbY: startY,
-      touching: true
+
+    this.setState(() => {
+      return {
+        thumbY: startY,
+        startThumbY: startY,
+        touching: true
+      }
     })
   }
 
@@ -134,7 +150,12 @@ export default class Drawer extends React.Component {
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
-    this.setState({touch: false})
+    this.setState(() => {
+      return {
+        touch: false
+      }
+    })
+
     if (this.state.position >= 0 && this.state.thumbY - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
       this.hideDrawer()
     }
@@ -147,17 +168,33 @@ export default class Drawer extends React.Component {
     // and finally route back to whichever URL we're at without the drawer.
     // (for the product page case, we're returning to /menu)
     this.props.onRequestClose()
+
     setTimeout(() => {
-      this.setState({ open: false, thumbY: 0, position: 0, touching: false })
+      this.setState(() => {
+        return {
+          open: false,
+          thumbY: 0,
+          position: 0,
+          touching: false
+        }
+      })
     }, 300)
   }
 
   updateThumbY (thumbPosition) {
-    this.setState({thumbY: thumbPosition})
+    this.setState(() => {
+      return {
+        thumbY: thumbPosition
+      }
+    })
   }
 
   updatePosition (delta) {
-    this.setState({position: this.state.position + delta})
+    this.setState(() => {
+      return {
+        position: this.state.position + delta
+      }
+    })
   }
 
   render () {
@@ -181,10 +218,16 @@ export default class Drawer extends React.Component {
     const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
 
     return (
-      <Motion style={{
-        translateY: spring(open ? position : window.innerHeight, animationSpring),
-        opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
-      }}>
+      <Motion
+        style={{
+          translateY: spring(open ? position : window.innerHeight, animationSpring),
+          opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
+        }}
+        defaultStyle={{
+          opacity: 0,
+          translateY: window.innerHeight
+        }}
+      >
         {({ translateY, opacity }) => {
           return (
             <div
@@ -257,9 +300,9 @@ export default class Drawer extends React.Component {
 }
 
 Drawer.propTypes = {
+  open: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]).isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
   onDrag: PropTypes.func,
   negativeScroll: PropTypes.number
 }
