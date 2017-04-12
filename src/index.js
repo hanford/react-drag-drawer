@@ -13,7 +13,7 @@ class Drawer extends PureComponent {
     onOpen: PropTypes.func,
     negativeScroll: PropTypes.number,
     overlayOpacity: PropTypes.number,
-    scrollToClose: PropTypes.scrollToClose
+    scrollToClose: PropTypes.number
   }
 
   constructor (props) {

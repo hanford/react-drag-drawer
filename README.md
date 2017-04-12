@@ -35,6 +35,21 @@ render () {
 }
 ```
 
+![](http://d.pr/i/ThqP+)
+
+## API
+| Param          | Type    | functionality | required |
+|----------------|---------|-----------------|-----------------|
+| open           | Boolean | null | true |
+| children       | Node    | null | true |
+| onRequestClose | Function| null | true |
+| onDrag | Function| invoked on drag | false |
+| onOpen | Function| invoked on drawer focus | false |
+| onClose | Function| invoked on drawer close | false |
+| overlayOpacity | Number | 0.6 unless different value is passed in | false |
+| negativeScroll | Number | -195px amount of negative scroll to allow | false |
+| scrollToClose | Number | pixel drag to trigger onRequestClose | false |
+
 ## License
 
 MIT © [Jack Hanford](http://jackhanford.com)
@@ -43,4 +58,3 @@ MIT © [Jack Hanford](http://jackhanford.com)
 ### TODO
 * Figure out how to handle styling (radium, CSS-Modules, <style jsx>, etc..)
 * Publish package to npm
-* Publish example (page, gif)

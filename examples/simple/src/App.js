@@ -30,8 +30,8 @@ export default class App extends Component {
 
         <Drawer open={open} onRequestClose={this.toggle}>
           <div className='card'>
-            I'm in a drawer!
             <br />
+            I'm in a drawer!
             <br />
             <br />
             <br />

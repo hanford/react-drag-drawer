@@ -1214,7 +1214,7 @@ Drawer.propTypes = {
   onOpen: __WEBPACK_IMPORTED_MODULE_3_prop_types___default.a.func,
   negativeScroll: __WEBPACK_IMPORTED_MODULE_3_prop_types___default.a.number,
   overlayOpacity: __WEBPACK_IMPORTED_MODULE_3_prop_types___default.a.number,
-  scrollToClose: __WEBPACK_IMPORTED_MODULE_3_prop_types___default.a.scrollToClose
+  scrollToClose: __WEBPACK_IMPORTED_MODULE_3_prop_types___default.a.number
 };
 /* harmony default export */ __webpack_exports__["default"] = (Drawer);
 
