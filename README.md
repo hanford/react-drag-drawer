@@ -6,6 +6,10 @@ Still in progress
 
 > Mobile draggable drawer that falls back to modals on desktop
 
+<br />
+
+[Live demo!](https://build-cfiogihwcb.now.sh)
+
 ## Install
 
 ```

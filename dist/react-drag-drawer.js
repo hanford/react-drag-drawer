@@ -725,14 +725,6 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
       touching: false
     };
 
-    this.propTypes = {
-      open: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].bool.isRequired,
-      children: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].oneOfType([__WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object, __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array]).isRequired,
-      onRequestClose: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func.isRequired,
-      onDrag: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func,
-      negativeScroll: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].number
-    };
-
     // Background opacity controls the darkness of the overlay background. More means a darker background.
     this.BACKGROUND_OPACITY = 0.6;
     this.NEGATIVE_SCROLL = props.negativeScroll || -195;
@@ -773,7 +765,6 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
     // in the process of opening the drawer
     if (!this.props.open && nextProps.open) {
       this.setState(() => {
-
         return {
           open: true
         };
@@ -785,7 +776,6 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
       this.removeListeners();
 
       setTimeout(() => {
-        console.log('hello');
         this.setState(() => {
           return {
             open: false
@@ -978,6 +968,14 @@ class Drawer extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 }
 /* harmony export (immutable) */ __webpack_exports__["default"] = Drawer;
 
+
+Drawer.propTypes = {
+  open: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].bool.isRequired,
+  children: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].oneOfType([__WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.object, __WEBPACK_IMPORTED_MODULE_1_react___default.a.PropTypes.array]).isRequired,
+  onRequestClose: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func.isRequired,
+  onDrag: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].func,
+  negativeScroll: __WEBPACK_IMPORTED_MODULE_1_react__["PropTypes"].number
+};
 
 /***/ }),
 /* 26 */
