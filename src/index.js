@@ -1,13 +1,23 @@
-import React, { PropTypes, Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Motion, spring, presets } from 'react-motion'
+import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
 
-export default class Drawer extends Component {
+class Drawer extends PureComponent {
+  static propTypes = {
+    open: PropTypes.bool.isRequired,
+    children: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]).isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onDrag: PropTypes.func,
+    onOpen: PropTypes.func,
+    negativeScroll: PropTypes.number,
+    overlayOpacity: PropTypes.number,
+    scrollToClose: PropTypes.scrollToClose
+  }
+
   constructor (props) {
     super(props)
-
-    this.drawer = null
 
     this.state = {
       open: props.open,
@@ -17,14 +27,17 @@ export default class Drawer extends Component {
       touching: false
     }
 
+    this.drawer = null
+
     // Background opacity controls the darkness of the overlay background. More means a darker background.
-    this.BACKGROUND_OPACITY = 0.6
+    this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
     this.NEGATIVE_SCROLL = props.negativeScroll || -195
-    this.SCROLL_TO_CLOSE = 50
+    this.SCROLL_TO_CLOSE = props.scrollToClose || 50
+    this.parentElement = props.parentElement || document.body
 
     this.attachListeners = this.attachListeners.bind(this)
     this.removeListeners = this.removeListeners.bind(this)
-    this.preventDefaultTouch = this.preventDefaultTouch.bind(this)
+    this.preventDefault = this.preventDefault.bind(this)
 
     this.updatePosition = this.updatePosition.bind(this)
     this.updateThumbY = this.updateThumbY.bind(this)
@@ -32,6 +45,10 @@ export default class Drawer extends Component {
     this.onTouchStart = this.onTouchStart.bind(this)
     this.onTouchMove = this.onTouchMove.bind(this)
     this.onTouchEnd = this.onTouchEnd.bind(this)
+  }
+
+  preventDefault (e) {
+    e.preventDefault()
   }
 
   getNegativeHeight (drawerHeight) {
@@ -56,6 +73,10 @@ export default class Drawer extends Component {
 
     // in the process of opening the drawer
     if (!this.props.open && nextProps.open) {
+      if (this.props.onOpen) {
+        this.props.onOpen()
+      }
+
       this.setState(() => {
         return {
           open: true
@@ -77,10 +98,6 @@ export default class Drawer extends Component {
     }
   }
 
-  preventDefaultTouch (e) {
-    e.preventDefault()
-  }
-
   componentWillUnmount () {
     // incase user navigated directly to checkout
     this.removeListeners()
@@ -95,11 +112,9 @@ export default class Drawer extends Component {
   }
 
   attachListeners () {
-    const body = document.body
-
-    body.addEventListener('touchmove', this.preventDefaultTouch)
-    body.addEventListener('scroll', this.preventDefaultTouch)
-    body.addEventListener('mousewheel', this.preventDefaultTouch)
+    this.parentElement.addEventListener('touchmove', this.preventDefault)
+    this.parentElement.addEventListener('scroll', this.preventDefault)
+    this.parentElement.addEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
     this.drawer.addEventListener('touchend', this.onTouchEnd)
@@ -108,11 +123,9 @@ export default class Drawer extends Component {
   }
 
   removeListeners () {
-    const body = document.body
-
-    body.removeEventListener('touchmove', this.preventDefaultTouch)
-    body.removeEventListener('scroll', this.preventDefaultTouch)
-    body.removeEventListener('mousewheel', this.preventDefaultTouch)
+    this.parentElement.removeEventListener('touchmove', this.preventDefault)
+    this.parentElement.removeEventListener('scroll', this.preventDefault)
+    this.parentElement.removeEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
@@ -206,7 +219,7 @@ export default class Drawer extends Component {
 
     const { position, touching } = this.state
 
-    if (this.props.open && this.state.open) {
+    if (open) {
       // if our drawer is open, let's attach the listeners
       this.attachListeners()
     }
@@ -237,8 +250,8 @@ export default class Drawer extends Component {
             >
               <div
                 style={{transform: `translateY(${translateY}px)`, height: '100%', width: '100%'}}
-                onClick={(e) => e.stopPropagation()}
-                ref={(drawer) => { this.drawer = drawer }}>
+                onClick={e => e.stopPropagation()}
+                ref={drawer => { this.drawer = drawer }}>
                 {this.props.children}
               </div>
 
@@ -299,10 +312,4 @@ export default class Drawer extends Component {
   }
 }
 
-Drawer.propTypes = {
-  open: PropTypes.bool.isRequired,
-  children: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]).isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-  onDrag: PropTypes.func,
-  negativeScroll: PropTypes.number
-}
+export default  Drawer

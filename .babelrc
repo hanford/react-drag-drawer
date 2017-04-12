@@ -1,5 +1,5 @@
 {
-  "presets": ["react"],
+  "presets": ["react", "babel-preset-stage-0"],
   "plugins": [
     "styled-jsx/babel"
   ]

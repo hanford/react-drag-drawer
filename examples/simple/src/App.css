@@ -60,10 +60,6 @@
   transition: all 0.25s linear;
 }
 
-.toggle:hover {
-  opacity: 0.7;
-}
-
 .toggle:active {
   transform: scale(0.9);
 }
