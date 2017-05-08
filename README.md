@@ -20,6 +20,12 @@ import Drawer from 'react-drag-drawer'
 
 ..
 
+toggle = () => {
+  let { toggle } = this.state
+
+  this.setState({ toggle: !toggle })
+}
+
 render () {
   const { open } = this.state
 
