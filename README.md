@@ -51,16 +51,6 @@ render () {
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
 | modalElementClass | Object | className to be applied to top <modal> element | false |
 
-## License
-
-MIT © [Jack Hanford](http://jackhanford.com)
-
-
-### TODO
-* Figure out how to handle styling (radium, CSS-Modules, <style jsx>, etc..)
-* Publish package to npm
-
-
 Example modal style
 ```css
 .modal {
@@ -89,3 +79,13 @@ Example modal style
   }
 }
 ```
+
+
+### TODO
+* Figure out optimal way of handling styling (radium, CSS-Modules, <style jsx>, etc..)
+* Make Drawer dismissable in all swipeable directions (decouple from drag down to dismiss)
+* Remove need for `refs` (Will fix preact)
+
+## License
+
+MIT © [Jack Hanford](http://jackhanford.com)
