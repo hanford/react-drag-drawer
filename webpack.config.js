@@ -16,7 +16,6 @@ const reactDOMExternal = {
 
 module.exports = {
   entry: {
-    'react-drag-drawer': './src/index.js',
     'react-drag-drawer.min': './src/index.js'
   },
   externals: {

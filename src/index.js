@@ -5,6 +5,7 @@ import window from 'global/window'
 import document from 'global/document'
 
 class Drawer extends PureComponent {
+
   static propTypes = {
     open: PropTypes.bool.isRequired,
     children: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]).isRequired,
@@ -251,7 +252,8 @@ class Drawer extends PureComponent {
               <div
                 style={{transform: `translateY(${translateY}px)`, height: '100%', width: '100%'}}
                 onClick={e => e.stopPropagation()}
-                ref={drawer => { this.drawer = drawer }}>
+                ref={drawer => { this.drawer = drawer }}
+                className={this.props.modalElementClass || ''}>
                 {this.props.children}
               </div>
 
