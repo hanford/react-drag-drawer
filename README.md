@@ -1,7 +1,3 @@
-~~
-Still in progress
-~~
-
 ## react-drag-drawer
 
 > Mobile draggable drawer that falls back to modals on desktop
