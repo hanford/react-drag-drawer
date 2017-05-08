@@ -256,35 +256,6 @@ class Drawer extends PureComponent {
               </div>
 
               <style jsx>{`
-                .modal {
-                  outline: none;
-                  background: white;
-                  font-size: var(--fontSizeParagraph);
-                  width: 76rem;
-                  max-width: 90%;
-                  display: flex;
-                  justify-content: space-between;
-                  flex-direction: column;
-                  z-index: 15;
-                  min-height: 47rem;
-
-                  /* add all the CSS hacks */
-                  will-change: transform;
-                  transform: translate3d(0, 0, 0);
-                  -webkit-backface-visibility: hidden;
-                  -webkit-transform-style: preserve-3d;
-                }
-
-                @media (max-width: 768px) {
-                  .modal {
-                    width: 100%;
-                    max-width: 100%;
-                    margin-bottom: 0;
-                    border-top-left-radius: 8px;
-                    border-top-right-radius: 8px;
-                  }
-                }
-
                 .drawerContainer {
                   position: fixed;
                   top: 0;
@@ -312,4 +283,4 @@ class Drawer extends PureComponent {
   }
 }
 
-export default  Drawer
+export default Drawer
