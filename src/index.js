@@ -251,7 +251,7 @@ class Drawer extends PureComponent {
               className='drawerContainer'
             >
               <div
-                style={{transform: `translateY(${translateY}px)`, height: '100%', width: '100%'}}
+                style={{transform: `translateY(${translateY}px)`}}
                 onClick={e => e.stopPropagation()}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}>
