@@ -53,6 +53,7 @@ render () {
 | negativeScroll | Number | -195px amount of negative scroll to allow | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
 | modalElementClass | Object | className to be applied to top <modal> element | false |
+| containerStyle | Object | styles to be applied to the drawer container | false |
 
 Example modal style
 ```css

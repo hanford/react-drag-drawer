@@ -16,7 +16,8 @@ class Drawer extends PureComponent {
     overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
-    modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+    modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    containerStyle: PropTypes.object
   }
 
   constructor (props) {
@@ -37,6 +38,10 @@ class Drawer extends PureComponent {
     this.NEGATIVE_SCROLL = props.negativeScroll || -195
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
+
+    // do we have any styles to apply to the container?
+    this.containerStyle = props.containerStyle || {}
+
 
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
@@ -261,7 +266,7 @@ class Drawer extends PureComponent {
         {({ translateY, opacity }) => {
           return (
             <div
-              style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`}}
+              style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...this.containerStyle}}
               onClick={this.hideDrawer}
               className='drawerContainer'
             >
