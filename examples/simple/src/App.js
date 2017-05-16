@@ -28,7 +28,7 @@ export default class App extends Component {
       <div className="App">
         <button onClick={this.toggle} className='toggle'>Open drawer!</button>
 
-        <Drawer open={open} onRequestClose={this.toggle} allowClose={false} modalElementClass='modalEl'>
+        <Drawer open={open} onRequestClose={this.toggle} modalElementClass='modalEl'>
           <div className='card'>
             <br />
             I'm in a drawer!

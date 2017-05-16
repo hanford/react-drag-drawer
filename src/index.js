@@ -37,7 +37,9 @@ class Drawer extends PureComponent {
     this.NEGATIVE_SCROLL = props.negativeScroll || -195
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
-    this.allowClose = props.allowClose || true
+
+    // typeof check, because false will otherwise be ignored
+    this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
 
     this.attachListeners = this.attachListeners.bind(this)
     this.removeListeners = this.removeListeners.bind(this)
