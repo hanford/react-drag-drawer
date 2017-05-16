@@ -42,29 +42,8 @@ class Drawer extends PureComponent {
     // do we have any styles to apply to the container?
     this.containerStyle = props.containerStyle || {}
 
-
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
-
-    this.attachListeners = this.attachListeners.bind(this)
-    this.removeListeners = this.removeListeners.bind(this)
-    this.preventDefault = this.preventDefault.bind(this)
-
-    this.updatePosition = this.updatePosition.bind(this)
-    this.updateThumbY = this.updateThumbY.bind(this)
-    this.hideDrawer = this.hideDrawer.bind(this)
-    this.onTouchStart = this.onTouchStart.bind(this)
-    this.onTouchMove = this.onTouchMove.bind(this)
-    this.onTouchEnd = this.onTouchEnd.bind(this)
-  }
-
-  preventDefault (e) {
-    e.preventDefault()
-  }
-
-  getNegativeHeight (drawerHeight) {
-    const NEGATIVE_SCROLL_BUFFER = 30
-    return window.innerHeight - drawerHeight - NEGATIVE_SCROLL_BUFFER
   }
 
   componentDidMount () {
@@ -122,7 +101,16 @@ class Drawer extends PureComponent {
     })
   }
 
-  attachListeners () {
+  preventDefault = e => {
+    e.preventDefault()
+  }
+
+  getNegativeHeight = drawerHeight => {
+    const NEGATIVE_SCROLL_BUFFER = 30
+    return window.innerHeight - drawerHeight - NEGATIVE_SCROLL_BUFFER
+  }
+
+  attachListeners = () => {
     this.parentElement.addEventListener('touchmove', this.preventDefault)
     this.parentElement.addEventListener('scroll', this.preventDefault)
     this.parentElement.addEventListener('mousewheel', this.preventDefault)
@@ -133,7 +121,7 @@ class Drawer extends PureComponent {
     this.drawer.addEventListener('touchstart', this.onTouchStart)
   }
 
-  removeListeners () {
+  removeListeners = () => {
     this.parentElement.removeEventListener('touchmove', this.preventDefault)
     this.parentElement.removeEventListener('scroll', this.preventDefault)
     this.parentElement.removeEventListener('mousewheel', this.preventDefault)
@@ -144,7 +132,7 @@ class Drawer extends PureComponent {
     this.drawer.removeEventListener('touchstart', this.onTouchStart)
   }
 
-  onTouchStart (event) {
+  onTouchStart = event => {
     const startY = event.touches[0].pageY
 
     this.setState(() => {
@@ -156,7 +144,7 @@ class Drawer extends PureComponent {
     })
   }
 
-  onTouchMove (event) {
+  onTouchMove = event => {
     const movingPosition = event.touches[0].pageY
     const delta = movingPosition - this.state.thumbY
 
@@ -170,7 +158,7 @@ class Drawer extends PureComponent {
     }
   }
 
-  onTouchEnd (event) {
+  onTouchEnd = event => {
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
@@ -185,7 +173,7 @@ class Drawer extends PureComponent {
     }
   }
 
-  hideDrawer () {
+  hideDrawer = () => {
     // if we aren't going to allow close, let's animate back to the default position
     if (this.allowClose === false) {
       return this.setState(() => {
@@ -216,7 +204,7 @@ class Drawer extends PureComponent {
     }, 300)
   }
 
-  updateThumbY (thumbPosition) {
+  updateThumbY = thumbPosition => {
     this.setState(() => {
       return {
         thumbY: thumbPosition
@@ -224,7 +212,7 @@ class Drawer extends PureComponent {
     })
   }
 
-  updatePosition (delta) {
+  updatePosition = delta => {
     this.setState(() => {
       return {
         position: this.state.position + delta
