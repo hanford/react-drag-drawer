@@ -48,6 +48,7 @@ render () {
 | onDrag | Function| invoked on drag | false |
 | onOpen | Function| invoked on drawer focus | false |
 | onClose | Function| invoked on drawer close | false |
+| allowClose | Boolean | block closing if allowClose={false}, default is true | false |
 | overlayOpacity | Number | 0.6 unless different value is passed in | false |
 | negativeScroll | Number | -195px amount of negative scroll to allow | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |

@@ -15,6 +15,7 @@ class Drawer extends PureComponent {
     negativeScroll: PropTypes.number,
     overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
+    allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
   }
 
@@ -36,6 +37,7 @@ class Drawer extends PureComponent {
     this.NEGATIVE_SCROLL = props.negativeScroll || -195
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
+    this.allowClose = props.allowClose || true
 
     this.attachListeners = this.attachListeners.bind(this)
     this.removeListeners = this.removeListeners.bind(this)
@@ -177,6 +179,17 @@ class Drawer extends PureComponent {
   }
 
   hideDrawer () {
+    // if we aren't going to allow close, let's animate back to the default position
+    if (this.allowClose === false) {
+      return this.setState(() => {
+        return {
+          position: 0,
+          thumbY: 0,
+          touching: false
+        }
+      })
+    }
+
     // let's reset our state, so our next drawer has a clean slate
     // clean up our listeners
     this.removeListeners()
