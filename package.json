@@ -1,6 +1,6 @@
 {
   "name": "react-drag-drawer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Draggable react drawer",
   "main": "./dist/react-drag-drawer.min.js",
   "repository": {
