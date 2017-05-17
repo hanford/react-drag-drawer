@@ -31,11 +31,8 @@ class Drawer extends PureComponent {
       touching: false
     }
 
-    this.drawer = null
-
     // Background opacity controls the darkness of the overlay background. More means a darker background.
     this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
-    this.NEGATIVE_SCROLL = props.negativeScroll || -195
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
 
@@ -46,19 +43,19 @@ class Drawer extends PureComponent {
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
   }
 
+  getNetgativeScroll = element => {
+    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - 20
+  }
+
   componentDidMount () {
     if (this.drawer) {
-      this.NEGATIVE_SCROLL = this.getNegativeHeight(this.drawer.scrollHeight)
+      this.getNetgativeScroll(this.drawer)
     }
   }
 
   componentWillUpdate (nextProps, nextState) {
     if (this.drawer) {
-      const newNegativeScroll = this.getNegativeHeight(this.drawer.scrollHeight)
-
-      if (newNegativeScroll < this.NEGATIVE_SCROLL) {
-        this.NEGATIVE_SCROLL = newNegativeScroll
-      }
+      this.getNetgativeScroll(this.drawer)
     }
 
     // in the process of opening the drawer
@@ -103,11 +100,6 @@ class Drawer extends PureComponent {
 
   preventDefault = e => {
     e.preventDefault()
-  }
-
-  getNegativeHeight = drawerHeight => {
-    const NEGATIVE_SCROLL_BUFFER = 30
-    return window.innerHeight - drawerHeight - NEGATIVE_SCROLL_BUFFER
   }
 
   attachListeners = () => {
@@ -262,7 +254,9 @@ class Drawer extends PureComponent {
                 style={{transform: `translateY(${translateY}px)`}}
                 onClick={e => e.stopPropagation()}
                 ref={drawer => { this.drawer = drawer }}
-                className={this.props.modalElementClass || ''}>
+                className={this.props.modalElementClass || ''}
+              >
+
                 {this.props.children}
               </div>
 
