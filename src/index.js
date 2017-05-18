@@ -44,7 +44,7 @@ class Drawer extends PureComponent {
   }
 
   getNetgativeScroll = element => {
-    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - 20
+    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight
   }
 
   componentDidMount () {
@@ -69,19 +69,6 @@ class Drawer extends PureComponent {
           open: true
         }
       })
-    }
-
-    // in the process of closing the drawer
-    if (this.props.open && !nextProps.open) {
-      this.removeListeners()
-
-      setTimeout(() => {
-        this.setState(() => {
-          return {
-            open: false
-          }
-        })
-      }, 300)
     }
   }
 
@@ -151,8 +138,12 @@ class Drawer extends PureComponent {
     }
 
     if (!(delta + this.state.position < this.NEGATIVE_SCROLL)) {
-      this.updatePosition(delta)
-      this.updateThumbY(movingPosition)
+      this.setState(() => {
+        return {
+          thumbY: movingPosition,
+          position: this.state.position + delta
+        }
+      })
     }
   }
 
@@ -189,14 +180,14 @@ class Drawer extends PureComponent {
       }
     })
 
-    // let's reset our state, so our next drawer has a clean slate
-    // clean up our listeners
-    this.removeListeners()
-    // and finally route back to whichever URL we're at without the drawer.
-    // (for the product page case, we're returning to /menu)
+    // call the close function
     this.props.onRequestClose()
 
     setTimeout(() => {
+      // let's reset our state, so our next drawer has a clean slate
+      // clean up our listeners
+      this.removeListeners()
+
       this.setState(() => {
         return {
           open: false,
@@ -205,22 +196,6 @@ class Drawer extends PureComponent {
         }
       })
     }, 300)
-  }
-
-  updateThumbY = thumbPosition => {
-    this.setState(() => {
-      return {
-        thumbY: thumbPosition
-      }
-    })
-  }
-
-  updatePosition = delta => {
-    this.setState(() => {
-      return {
-        position: this.state.position + delta
-      }
-    })
   }
 
   render () {
@@ -237,16 +212,10 @@ class Drawer extends PureComponent {
       this.attachListeners()
     }
 
-    // this is passed to react-motion and react-motion animate accordingly.
-    // we use a differenent animation curve when touching is true, b/c we want the touch
-    // transition to feel native, which require a much higher stiffness (when your thumb moves, you want
-    // the element to respond immediately)
-    const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
-
     return (
       <Motion
         style={{
-          translateY: spring(open ? position : window.innerHeight, animationSpring),
+          translateY: spring(open ? position : (window.innerHeight + 100), presets.stiff),
           opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
         }}
         defaultStyle={{
