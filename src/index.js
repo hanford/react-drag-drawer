@@ -12,7 +12,6 @@ class Drawer extends PureComponent {
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
-    negativeScroll: PropTypes.number,
     overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
