@@ -183,6 +183,12 @@ class Drawer extends PureComponent {
       })
     }
 
+    this.setState(() => {
+      return {
+        touching: false
+      }
+    })
+
     // let's reset our state, so our next drawer has a clean slate
     // clean up our listeners
     this.removeListeners()
@@ -195,8 +201,7 @@ class Drawer extends PureComponent {
         return {
           open: false,
           thumbY: 0,
-          position: 0,
-          touching: false
+          position: 0
         }
       })
     }, 300)
@@ -257,12 +262,11 @@ class Drawer extends PureComponent {
               className='drawerContainer'
             >
               <div
-                style={{transform: `translateY(${translateY}px)`}}
+                style={{transform: `translateY(${touching ? position : translateY}px)`}}
                 onClick={e => e.stopPropagation()}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
               >
-
                 {this.props.children}
               </div>
 
