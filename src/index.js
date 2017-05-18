@@ -125,6 +125,9 @@ class Drawer extends PureComponent {
   }
 
   onTouchStart = event => {
+    // stop android's pull to refresh behavior
+    event.preventDefault()
+
     const startY = event.touches[0].pageY
 
     this.setState(() => {
@@ -137,6 +140,9 @@ class Drawer extends PureComponent {
   }
 
   onTouchMove = event => {
+    // stop android's pull to refresh behavior
+    event.preventDefault()
+
     const movingPosition = event.touches[0].pageY
     const delta = movingPosition - this.state.thumbY
 
