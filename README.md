@@ -4,7 +4,7 @@
 
 <br />
 
-[Live demo!](https://build-mswpkxsqja.now.sh)
+[Live demo!](https://build-sjqytwwjxj.now.sh)
 
 ## Install
 
