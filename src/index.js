@@ -222,7 +222,6 @@ class Drawer extends Component {
     }
 
     const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
-    const containerClass = this.state.open ? 'drawerContainer' : ''
 
     return (
       <Motion
