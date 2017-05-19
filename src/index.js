@@ -43,7 +43,7 @@ class Drawer extends PureComponent {
   }
 
   getNetgativeScroll = element => {
-    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight
+    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - 20
   }
 
   componentDidMount () {
@@ -211,10 +211,12 @@ class Drawer extends PureComponent {
       this.attachListeners()
     }
 
+    const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
+
     return (
       <Motion
         style={{
-          translateY: spring(open ? position : (window.innerHeight + 100), presets.stiff),
+          translateY: spring(open ? position : (window.innerHeight + 100), animationSpring),
           opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
         }}
         defaultStyle={{
@@ -230,7 +232,7 @@ class Drawer extends PureComponent {
               className='drawerContainer'
             >
               <div
-                style={{transform: `translateY(${touching ? position : translateY}px)`}}
+                style={{transform: `translateY(${translateY}px)`}}
                 onClick={e => e.stopPropagation()}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
