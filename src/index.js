@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
 
-class Drawer extends PureComponent {
+class Drawer extends Component {
 
   static propTypes = {
     open: PropTypes.bool.isRequired,
@@ -53,6 +53,19 @@ class Drawer extends PureComponent {
   }
 
   componentWillUpdate (nextProps, nextState) {
+    // in the process of closing the drawer
+    if (this.props.open && !nextProps.open) {
+      this.removeListeners()
+
+      setTimeout(() => {
+        this.setState(() => {
+          return {
+            open: false
+          }
+        })
+      }, 300)
+    }
+
     if (this.drawer) {
       this.getNetgativeScroll(this.drawer)
     }
@@ -176,14 +189,14 @@ class Drawer extends PureComponent {
       }
     })
 
+    // let's reset our state, so our next drawer has a clean slate
+    // clean up our listeners
+    this.removeListeners()
+
     // call the close function
     this.props.onRequestClose()
 
     setTimeout(() => {
-      // let's reset our state, so our next drawer has a clean slate
-      // clean up our listeners
-      this.removeListeners()
-
       this.setState(() => {
         return {
           open: false,
@@ -209,11 +222,12 @@ class Drawer extends PureComponent {
     }
 
     const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
+    const containerClass = this.state.open ? 'drawerContainer' : ''
 
     return (
       <Motion
         style={{
-          translateY: spring(open ? position : (window.innerHeight + 100), animationSpring),
+          translateY: spring(open ? position : window.innerHeight, animationSpring),
           opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
         }}
         defaultStyle={{
