@@ -105,22 +105,12 @@ class Drawer extends Component {
     this.parentElement.addEventListener('touchmove', this.preventDefault)
     this.parentElement.addEventListener('scroll', this.preventDefault)
     this.parentElement.addEventListener('mousewheel', this.preventDefault)
-
-    if (!this.drawer) return
-    this.drawer.addEventListener('touchend', this.onTouchEnd)
-    this.drawer.addEventListener('touchmove', this.onTouchMove)
-    this.drawer.addEventListener('touchstart', this.onTouchStart)
   }
 
   removeListeners = () => {
     this.parentElement.removeEventListener('touchmove', this.preventDefault)
     this.parentElement.removeEventListener('scroll', this.preventDefault)
     this.parentElement.removeEventListener('mousewheel', this.preventDefault)
-
-    if (!this.drawer) return
-    this.drawer.removeEventListener('touchend', this.onTouchEnd)
-    this.drawer.removeEventListener('touchmove', this.onTouchMove)
-    this.drawer.removeEventListener('touchstart', this.onTouchStart)
   }
 
   onTouchStart = event => {
@@ -242,8 +232,11 @@ class Drawer extends Component {
               className='drawerContainer'
             >
               <div
-                style={{transform: `translateY(${translateY}px)`}}
                 onClick={e => e.stopPropagation()}
+                onTouchEnd={this.onTouchEnd}
+                onTouchMove={this.onTouchMove}
+                onTouchStart={this.onTouchStart}
+                style={{transform: `translateY(${translateY}px)`}}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
               >
