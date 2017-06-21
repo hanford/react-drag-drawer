@@ -16,7 +16,12 @@ class Drawer extends Component {
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    containerStyle: PropTypes.object
+    containerStyle: PropTypes.object,
+    onRest: PropTypes.func
+  }
+
+  static defaultProps = {
+    onRest: () => {}
   }
 
   constructor (props) {
@@ -223,6 +228,7 @@ class Drawer extends Component {
           opacity: 0,
           translateY: window.innerHeight
         }}
+        onRest={this.props.onRest}
       >
         {({ translateY, opacity }) => {
           return (

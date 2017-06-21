@@ -26,11 +26,19 @@ toggle = () => {
   this.setState({ toggle: !toggle })
 }
 
+logState = () => {
+  console.log(`Drawer now ${this.state.open ? 'open' : 'closed'}`)
+}
+
 render () {
   const { open } = this.state
 
   return (
-    <Drawer open={open} onRequestClose={this.toggle}>
+    <Drawer
+      open={open}
+      onRequestClose={this.toggle}
+      onRest={this.logState}
+    >
       <div>Hey Im inside the drawer!</div>
     </Drawer>
   )
