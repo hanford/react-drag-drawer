@@ -223,6 +223,7 @@ class Drawer extends Component {
           opacity: 0,
           translateY: window.innerHeight
         }}
+        onRest={this.props.onRest}
       >
         {({ translateY, opacity }) => {
           return (
@@ -269,6 +270,14 @@ class Drawer extends Component {
       </Motion>
     )
   }
+}
+
+Drawer.defaultProps = {
+  onRest: () => {}
+}
+
+Drawer.propTypes = {
+  onRest: PropTypes.func.isRequired
 }
 
 export default Drawer
