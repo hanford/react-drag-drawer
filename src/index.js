@@ -16,7 +16,12 @@ class Drawer extends Component {
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    containerStyle: PropTypes.object
+    containerStyle: PropTypes.object,
+    onRest: PropTypes.func
+  }
+
+  static defaultProps = {
+    onRest: () => {}
   }
 
   constructor (props) {
@@ -270,14 +275,6 @@ class Drawer extends Component {
       </Motion>
     )
   }
-}
-
-Drawer.defaultProps = {
-  onRest: () => {}
-}
-
-Drawer.propTypes = {
-  onRest: PropTypes.func.isRequired
 }
 
 export default Drawer
