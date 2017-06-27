@@ -111,12 +111,14 @@ class Drawer extends Component {
   }
 
   attachListeners = () => {
+    if (this.props.disableDrag) return
     this.parentElement.addEventListener('touchmove', this.preventDefault)
     this.parentElement.addEventListener('scroll', this.preventDefault)
     this.parentElement.addEventListener('mousewheel', this.preventDefault)
   }
 
   removeListeners = () => {
+    if (this.props.disableDrag) return
     this.parentElement.removeEventListener('touchmove', this.preventDefault)
     this.parentElement.removeEventListener('scroll', this.preventDefault)
     this.parentElement.removeEventListener('mousewheel', this.preventDefault)
