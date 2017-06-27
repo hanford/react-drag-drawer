@@ -18,7 +18,7 @@ class Drawer extends Component {
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
     onRest: PropTypes.func,
-    disableDrag: PropTypes.func,
+    disableDrag: PropTypes.bool,
     maxNegativeScroll: PropTypes.number.isRequired
   }
 
