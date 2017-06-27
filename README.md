@@ -56,11 +56,15 @@ render () {
 | onDrag | Function| invoked on drag | false |
 | onOpen | Function| invoked on drawer focus | false |
 | onClose | Function| invoked on drawer close | false |
+| onRest | Function| invoked on finish of open/close animation | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
 | overlayOpacity | Number | 0.6 unless different value is passed in | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
 | modalElementClass | Object | className to be applied to top <modal> element | false |
 | containerStyle | Object | styles to be applied to the drawer container | false |
+| disableDrag | Boolean | makes the drawer undraggable - basically just a modal | false |
+| maxNegativeScroll | Number | distance a drawer can be dragged above the bottom of the window container | false |
+
 
 Example modal style
 ```css
