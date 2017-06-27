@@ -17,11 +17,15 @@ class Drawer extends Component {
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
-    onRest: PropTypes.func
+    onRest: PropTypes.func,
+    disableDrag: PropTypes.func,
+    maxNegativeScroll: PropTypes.number.isRequired
   }
 
   static defaultProps = {
-    onRest: () => {}
+    onRest: () => {},
+    maxNegativeScroll: 20,
+    disableDrag: false
   }
 
   constructor (props) {
@@ -47,13 +51,13 @@ class Drawer extends Component {
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
   }
 
-  getNetgativeScroll = element => {
-    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - 20
+  getNegativeScroll = element => {
+    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - this.props.maxNegativeScroll
   }
 
   componentDidMount () {
     if (this.drawer) {
-      this.getNetgativeScroll(this.drawer)
+      this.getNegativeScroll(this.drawer)
     }
   }
 
@@ -72,7 +76,7 @@ class Drawer extends Component {
     }
 
     if (this.drawer) {
-      this.getNetgativeScroll(this.drawer)
+      this.getNegativeScroll(this.drawer)
     }
 
     // in the process of opening the drawer
@@ -119,6 +123,8 @@ class Drawer extends Component {
   }
 
   onTouchStart = event => {
+    // immediately return if disableDrag
+    if (this.props.disableDrag) return
     const startY = event.touches[0].pageY
 
     this.setState(() => {
@@ -131,6 +137,8 @@ class Drawer extends Component {
   }
 
   onTouchMove = event => {
+    // immediately return if disableDrag
+    if (this.props.disableDrag) return
     // stop android's pull to refresh behavior
     event.preventDefault()
 
@@ -152,6 +160,8 @@ class Drawer extends Component {
   }
 
   onTouchEnd = event => {
+    // immediately return if disableDrag
+    if (this.props.disableDrag) return
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
