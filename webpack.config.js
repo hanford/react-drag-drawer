@@ -1,26 +1,23 @@
 const webpack = require('webpack')
-
-const reactExternal = {
-  root: 'React',
-  commonjs2: 'react',
-  commonjs: 'react',
-  amd: 'react'
-}
-
-const reactDOMExternal = {
-  root: 'ReactDOM',
-  commonjs2: 'react-dom',
-  commonjs: 'react-dom',
-  amd: 'react-dom'
-}
+const path = require('path')
 
 module.exports = {
   entry: {
     'react-drag-drawer.min': './src/index.js'
   },
   externals: {
-    'react': reactExternal,
-    'react-dom': reactDOMExternal
+    'react': {
+      root: 'React',
+      commonjs2: 'react',
+      commonjs: 'react',
+      amd: 'react'
+    },
+    'react-motion': {
+      root: 'ReactMotion',
+      commonjs2: 'react-motion',
+      commonjs: 'react-motion',
+      amd: 'react-motion'
+    }
   },
   module: {
     rules: [{
@@ -30,9 +27,11 @@ module.exports = {
     }]
   },
   output: {
-    filename: './dist/[name].js',
-    libraryTarget: 'umd',
-    library: 'ReactDragDrawer'
+    filename: '[name].js',
+    path: path.join(__dirname, 'dist'),
+    publicPath: 'dist/',
+    library: 'ReactDragDrawer',
+    libraryTarget: 'umd'
   },
   plugins: [
     new webpack.DefinePlugin({
