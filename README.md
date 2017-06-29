@@ -9,7 +9,11 @@
 ## Install
 
 ```
-$ yarn add react-drag-drawer
+/* React */
+$ npm install react-drag-drawer react-motion --save
+
+/* Preact */
+$ npm install react-drag-drawer preact-motion --save
 ```
 
 
