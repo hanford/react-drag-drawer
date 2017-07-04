@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import Drawer from 'react-drag-drawer'
+
 import './App.css'
 import GithubBadge from './github-badge'
-import Drawer from '../../../dist/react-drag-drawer.min.js'
 
 export default class App extends Component {
   constructor () {
