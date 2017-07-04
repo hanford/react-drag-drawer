@@ -43,5 +43,8 @@
   },
   "eslintConfig": {
     "extends": "./node_modules/react-scripts/config/eslint.js"
+  },
+  "now": {
+    "alias": "react-drag-drawer.now.sh"
   }
 }

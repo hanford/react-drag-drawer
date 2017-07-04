@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
+import GithubBadge from './github-badge'
 import Drawer from '../../../dist/react-drag-drawer.min.js'
 
 export default class App extends Component {
@@ -26,6 +27,12 @@ export default class App extends Component {
 
     return (
       <div className="App">
+
+        <GithubBadge
+          url='https://github.com/hanford/react-drag-drawer'
+          title='Star on Github'
+        />
+
         <button onClick={this.toggle} className='toggle'>Open drawer!</button>
 
         <Drawer open={open} onRequestClose={this.toggle} modalElementClass='modalEl'>
