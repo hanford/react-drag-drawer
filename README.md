@@ -4,7 +4,7 @@
 
 <br />
 
-[Live demo!](https://build-sjqytwwjxj.now.sh)
+[Live demo!](https://react-drag-drawer-example-oamqnmjhlc.now.sh)
 
 ## Install
 
@@ -103,7 +103,6 @@ Example modal style
 ### TODO
 * Figure out optimal way of handling styling (radium, CSS-Modules, <style jsx>, etc..)
 * Make Drawer dismissable in all swipeable directions (decouple from drag down to dismiss)
-* Remove need for `refs` (Will fix preact)
 
 ## License
 
