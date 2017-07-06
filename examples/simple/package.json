@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "react-drag-drawer": "~1.0.0",
+    "react-github-badge": "~0.2.0",
     "react-motion": "~0.5.0",
     "zippo": "~1.0.1"
   },
