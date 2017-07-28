@@ -44,9 +44,6 @@ class Drawer extends Component {
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
 
-    // do we have any styles to apply to the container?
-    this.containerStyle = props.containerStyle || {}
-
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
   }
@@ -218,6 +215,9 @@ class Drawer extends Component {
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
 
+    const { containerStyle } = this.props
+    console.log(containerStyle)
+
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
 
@@ -245,7 +245,7 @@ class Drawer extends Component {
         {({ translateY, opacity }) => {
           return (
             <div
-              style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...this.containerStyle}}
+              style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
               onClick={this.hideDrawer}
               className='drawerContainer'
             >
