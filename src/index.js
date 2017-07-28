@@ -36,7 +36,8 @@ class Drawer extends Component {
       thumbY: 0,
       startThumbY: 0,
       position: 0,
-      touching: false
+      touching: false,
+      listenersAttached: false
     }
 
     // Background opacity controls the darkness of the overlay background. More means a darker background.
@@ -108,10 +109,12 @@ class Drawer extends Component {
   }
 
   attachListeners = () => {
-    if (this.props.disableDrag) return
+    // only attach listeners once as this function gets called every re-render
+    if (this.props.disableDrag || this.state.listenersAttached) return
     this.parentElement.addEventListener('touchmove', this.preventDefault)
     this.parentElement.addEventListener('scroll', this.preventDefault)
     this.parentElement.addEventListener('mousewheel', this.preventDefault)
+    this.setState({listenersAttached: true})
   }
 
   removeListeners = () => {
@@ -119,6 +122,7 @@ class Drawer extends Component {
     this.parentElement.removeEventListener('touchmove', this.preventDefault)
     this.parentElement.removeEventListener('scroll', this.preventDefault)
     this.parentElement.removeEventListener('mousewheel', this.preventDefault)
+    this.setState({listenersAttached: false})
   }
 
   onTouchStart = event => {
@@ -216,7 +220,6 @@ class Drawer extends Component {
     if (!this.props.open && !this.state.open) return <div />
 
     const { containerStyle } = this.props
-    console.log(containerStyle)
 
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
