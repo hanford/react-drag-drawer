@@ -44,9 +44,30 @@ class Drawer extends Component {
     this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
+    this.supportsPassive = undefined
 
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
+  }
+
+
+  applyPassive = () => {
+    if (this.supportsPassive !== undefined) {
+      return this.supportsPassive ? {passive: true} : false
+    }
+
+    // feature detect
+    let isSupported = false
+
+    try {
+      document.addEventListener('test', null, {get passive () {
+        isSupported = true
+      }})
+    } catch (e) {}
+
+    this.supportsPassive = isSupported
+
+    return this.applyPassive()
   }
 
   getNegativeScroll = element => {
@@ -111,18 +132,32 @@ class Drawer extends Component {
   attachListeners = () => {
     // only attach listeners once as this function gets called every re-render
     if (this.props.disableDrag || this.state.listenersAttached) return
+
     this.parentElement.addEventListener('touchmove', this.preventDefault)
     this.parentElement.addEventListener('scroll', this.preventDefault)
     this.parentElement.addEventListener('mousewheel', this.preventDefault)
-    this.setState({listenersAttached: true})
+
+    if (!this.drawer) return
+    this.drawer.addEventListener('touchend', this.onTouchEnd)
+    this.drawer.addEventListener('touchmove', this.onTouchMove)
+    this.drawer.addEventListener('touchstart', this.onTouchStart)
+
+    this.setState({ listenersAttached: true })
   }
 
   removeListeners = () => {
     if (this.props.disableDrag) return
+
     this.parentElement.removeEventListener('touchmove', this.preventDefault)
     this.parentElement.removeEventListener('scroll', this.preventDefault)
     this.parentElement.removeEventListener('mousewheel', this.preventDefault)
-    this.setState({listenersAttached: false})
+
+    if (!this.drawer) return
+    this.drawer.removeEventListener('touchend', this.onTouchEnd)
+    this.drawer.removeEventListener('touchmove', this.onTouchMove)
+    this.drawer.removeEventListener('touchstart', this.onTouchStart)
+
+    this.setState({ listenersAttached: false })
   }
 
   onTouchStart = event => {
@@ -142,6 +177,7 @@ class Drawer extends Component {
   onTouchMove = event => {
     // immediately return if disableDrag
     if (this.props.disableDrag) return
+
     // stop android's pull to refresh behavior
     event.preventDefault()
 
@@ -254,9 +290,6 @@ class Drawer extends Component {
             >
               <div
                 onClick={e => e.stopPropagation()}
-                onTouchEnd={this.onTouchEnd}
-                onTouchMove={this.onTouchMove}
-                onTouchStart={this.onTouchStart}
                 style={{transform: `translateY(${translateY}px)`}}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
