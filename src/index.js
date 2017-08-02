@@ -44,30 +44,9 @@ class Drawer extends Component {
     this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
     this.parentElement = props.parentElement || document.body
-    this.supportsPassive = undefined
 
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
-  }
-
-
-  applyPassive = () => {
-    if (this.supportsPassive !== undefined) {
-      return this.supportsPassive ? {passive: true} : false
-    }
-
-    // feature detect
-    let isSupported = false
-
-    try {
-      document.addEventListener('test', null, {get passive () {
-        isSupported = true
-      }})
-    } catch (e) {}
-
-    this.supportsPassive = isSupported
-
-    return this.applyPassive()
   }
 
   getNegativeScroll = element => {
