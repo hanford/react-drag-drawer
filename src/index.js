@@ -257,7 +257,7 @@ class Drawer extends Component {
                 onTouchEnd={this.onTouchEnd}
                 onTouchMove={this.onTouchMove}
                 onTouchStart={this.onTouchStart}
-                style={{transform: `translateY(${translateY}px)`}}
+                style={{transform: `translateY(${touching ? position : translateY }px)`}}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
               >
