@@ -218,16 +218,6 @@ class Drawer extends Component {
 
     // call the close function
     this.props.onRequestClose()
-
-    setTimeout(() => {
-      this.setState(() => {
-        return {
-          open: false,
-          thumbY: 0,
-          position: 0
-        }
-      })
-    }, 300)
   }
 
   render () {
