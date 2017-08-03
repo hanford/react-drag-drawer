@@ -4,7 +4,7 @@
 
 <br />
 
-[Live demo!](https://react-drag-drawer-example-oamqnmjhlc.now.sh)
+[Live demo!](https://react-drag-drawer.jackhanford.com)
 
 ## Install
 
