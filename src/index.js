@@ -162,9 +162,10 @@ class Drawer extends Component {
 
     const movingPosition = event.touches[0].pageY
     const delta = movingPosition - this.state.thumbY
+    const position = this.state.position + delta
 
     if (this.props.onDrag) {
-      this.props.onDrag()
+      this.props.onDrag(position)
     }
 
     if (!(delta + this.state.position < this.NEGATIVE_SCROLL)) {
