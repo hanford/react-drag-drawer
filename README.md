@@ -69,6 +69,7 @@ render () {
 | disableDrag | Boolean | makes the drawer undraggable - basically just a modal | false |
 | maxNegativeScroll | Number | distance a drawer can be dragged above the bottom of the window container | false |
 | parentElement | ref | block scrolls on element if you're not using body scrolling | false |
+| checkPosition | Function | returns Boolean of whether or not you're at the bottom of the scroll container | false |
 
 
 Example modal style
