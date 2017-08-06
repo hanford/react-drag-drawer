@@ -168,7 +168,7 @@ class Drawer extends Component {
       this.props.onDrag(position)
     }
 
-    if (!(delta + this.state.position < this.NEGATIVE_SCROLL)) {
+    if (!(position < this.NEGATIVE_SCROLL)) {
       this.setState(() => {
         return {
           thumbY: movingPosition,
