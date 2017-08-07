@@ -19,13 +19,15 @@ class Drawer extends Component {
     containerStyle: PropTypes.object,
     onRest: PropTypes.func,
     disableDrag: PropTypes.bool,
-    maxNegativeScroll: PropTypes.number.isRequired
+    maxNegativeScroll: PropTypes.number.isRequired,
+    notifyWillClose: PropTypes.func
   }
 
   static defaultProps = {
     onRest: () => {},
     maxNegativeScroll: 20,
-    disableDrag: false
+    disableDrag: false,
+    notifyWillClose: () => {}
   }
 
   constructor (props) {
@@ -173,14 +175,11 @@ class Drawer extends Component {
       this.props.onDrag(position)
     }
 
-
-
-    if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE && this.props.notifyWillClose) {
+    if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
       this.props.notifyWillClose(true)
-    } else if (this.props.notifyWillClose) {
+    } else {
       this.props.notifyWillClose(false)
     }
-
 
     if (!atBottom) {
       this.setState(() => {
