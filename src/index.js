@@ -20,7 +20,7 @@ class Drawer extends Component {
     onRest: PropTypes.func,
     disableDrag: PropTypes.bool,
     maxNegativeScroll: PropTypes.number.isRequired,
-    notifyWillClose: PropTypes.func
+    notifyWillClose: PropTypes.func,
     parentElement: PropTypes.object
   }
 
@@ -138,15 +138,11 @@ class Drawer extends Component {
 
     if (!this.drawer) return
 
-    let elementToHijack = this.drawer
+    const container = this.state.parentElement
 
-    if (this.state.parentElement && !this.props.disableDrag) {
-      elementToHijack = this.state.parentElement
-    }
-
-    elementToHijack.addEventListener('touchend', this.onTouchEnd)
-    elementToHijack.addEventListener('touchmove', this.onTouchMove)
-    elementToHijack.addEventListener('touchstart', this.onTouchStart)
+    container.addEventListener('touchend', this.onTouchEnd)
+    container.addEventListener('touchmove', this.onTouchMove)
+    container.addEventListener('touchstart', this.onTouchStart)
 
     this.setState({ listenersAttached: true })
   }
