@@ -51,6 +51,11 @@ class Drawer extends Component {
 
   getNegativeScroll = element => {
     this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - this.props.maxNegativeScroll
+
+    if (this.props.saveNegativeScroll) {
+      console.log(this.NEGATIVE_SCROLL, element.scrollHeight)
+      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, element.scrollHeight)
+    }
   }
 
   componentDidMount () {
@@ -167,10 +172,6 @@ class Drawer extends Component {
 
     if (this.props.onDrag) {
       this.props.onDrag(position)
-    }
-
-    if (this.props.checkPosition) {
-      this.props.checkPosition(atBottom)
     }
 
     if (!atBottom) {
