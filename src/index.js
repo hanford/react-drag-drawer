@@ -173,6 +173,15 @@ class Drawer extends Component {
       this.props.onDrag(position)
     }
 
+
+
+    if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE && this.props.notifyWillClose) {
+      this.props.notifyWillClose(true)
+    } else if (this.props.notifyWillClose) {
+      this.props.notifyWillClose(false)
+    }
+
+
     if (!atBottom) {
       this.setState(() => {
         return {
