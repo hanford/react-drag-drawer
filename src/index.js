@@ -20,8 +20,7 @@ class Drawer extends Component {
     onRest: PropTypes.func,
     disableDrag: PropTypes.bool,
     maxNegativeScroll: PropTypes.number.isRequired,
-    notifyWillClose: PropTypes.func,
-    parentElement: PropTypes.object
+    notifyWillClose: PropTypes.func
   }
 
   static defaultProps = {
@@ -40,13 +39,13 @@ class Drawer extends Component {
       startThumbY: 0,
       position: 0,
       touching: false,
-      listenersAttached: false,
-      parentElement: props.parentElement || document.body
+      listenersAttached: false
     }
 
     // Background opacity controls the darkness of the overlay background. More means a darker background.
     this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
     this.SCROLL_TO_CLOSE = props.scrollToClose || 50
+    this.parentElement = props.parentElement || document.body
 
     // typeof check, because false will otherwise be ignored
     this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
@@ -63,19 +62,6 @@ class Drawer extends Component {
   componentDidMount () {
     if (this.drawer) {
       this.getNegativeScroll(this.drawer)
-    }
-  }
-
-  componentWillReceiveProps (nextProps, nextState) {
-    if (nextProps.parentElement && nextProps.parentElement !== this.state.parentElement) {
-      this.state.parentElement.removeEventListener('touchend', this.onTouchEnd)
-      this.state.parentElement.removeEventListener('touchmove', this.onTouchMove)
-      this.state.parentElement.removeEventListener('touchstart', this.onTouchStart)
-      this.state.parentElement.removeEventListener('touchmove', this.preventDefault)
-      this.state.parentElement.removeEventListener('scroll', this.preventDefault)
-      this.state.parentElement.removeEventListener('mousewheel', this.preventDefault)
-
-      this.setState({listenersAttached: false, parentElement: nextProps.parentElement})
     }
   }
 
@@ -132,17 +118,14 @@ class Drawer extends Component {
     // only attach listeners once as this function gets called every re-render
     if (this.props.disableDrag || this.state.listenersAttached) return
 
-    this.state.parentElement.addEventListener('touchmove', this.preventDefault)
-    this.state.parentElement.addEventListener('scroll', this.preventDefault)
-    this.state.parentElement.addEventListener('mousewheel', this.preventDefault)
+    this.parentElement.addEventListener('touchmove', this.preventDefault)
+    this.parentElement.addEventListener('scroll', this.preventDefault)
+    this.parentElement.addEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
-
-    const container = this.state.parentElement
-
-    container.addEventListener('touchend', this.onTouchEnd)
-    container.addEventListener('touchmove', this.onTouchMove)
-    container.addEventListener('touchstart', this.onTouchStart)
+    this.drawer.addEventListener('touchend', this.onTouchEnd)
+    this.drawer.addEventListener('touchmove', this.onTouchMove)
+    this.drawer.addEventListener('touchstart', this.onTouchStart)
 
     this.setState({ listenersAttached: true })
   }
@@ -150,9 +133,9 @@ class Drawer extends Component {
   removeListeners = () => {
     if (this.props.disableDrag) return
 
-    this.state.parentElement.removeEventListener('touchmove', this.preventDefault)
-    this.state.parentElement.removeEventListener('scroll', this.preventDefault)
-    this.state.parentElement.removeEventListener('mousewheel', this.preventDefault)
+    this.parentElement.removeEventListener('touchmove', this.preventDefault)
+    this.parentElement.removeEventListener('scroll', this.preventDefault)
+    this.parentElement.removeEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
