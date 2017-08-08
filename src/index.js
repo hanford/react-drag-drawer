@@ -27,7 +27,8 @@ class Drawer extends Component {
     onRest: () => {},
     maxNegativeScroll: 20,
     disableDrag: false,
-    notifyWillClose: () => {}
+    notifyWillClose: () => {},
+    spring: {damping: 20, stiffness: 300}
   }
 
   constructor (props) {
@@ -250,7 +251,7 @@ class Drawer extends Component {
       this.attachListeners()
     }
 
-    const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
+    const animationSpring = touching ? this.props.spring : presets.stiff
 
     return (
       <Motion
