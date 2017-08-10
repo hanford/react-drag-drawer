@@ -223,6 +223,7 @@ class Drawer extends Component {
 
     this.setState(() => {
       return {
+        position: 0,
         touching: false
       }
     })
