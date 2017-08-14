@@ -8,7 +8,7 @@ class Drawer extends Component {
 
   static propTypes = {
     open: PropTypes.bool.isRequired,
-    children: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]).isRequired,
+    children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
