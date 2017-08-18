@@ -241,7 +241,7 @@ class Drawer extends Component {
     const { escapeClose } = this.props
 
     if (escapeClose && event.keyCode === 27) {
-      this.props.hideDrawer()
+      this.hideDrawer()
     }
   }
 
