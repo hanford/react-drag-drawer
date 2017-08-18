@@ -28,7 +28,8 @@ class Drawer extends Component {
     maxNegativeScroll: 20,
     disableDrag: false,
     notifyWillClose: () => {},
-    spring: {damping: 20, stiffness: 300}
+    spring: {damping: 20, stiffness: 300},
+    escapeClose: false
   }
 
   constructor (props) {
@@ -236,6 +237,14 @@ class Drawer extends Component {
     this.props.onRequestClose()
   }
 
+  onKeyDown = event => {
+    const { escapeClose } = this.props
+
+    if (escapeClose && event.keyCode === 27) {
+      this.props.hideDrawer()
+    }
+  }
+
   render () {
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
@@ -275,9 +284,11 @@ class Drawer extends Component {
             >
               <div
                 onClick={e => e.stopPropagation()}
+                onKeyDown={this.onKeyDown}
                 style={{transform: `translateY(${translateY}px)`}}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
+                tabIndex={this.props.tabIndex || '0'}
               >
                 {this.props.children}
               </div>
