@@ -15,6 +15,7 @@ class Drawer extends Component {
     overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
+    direction: PropTypes.string,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
     onRest: PropTypes.func,
@@ -29,7 +30,8 @@ class Drawer extends Component {
     disableDrag: false,
     notifyWillClose: () => {},
     spring: {damping: 20, stiffness: 300},
-    escapeClose: false
+    escapeClose: false,
+    direction: 'y'
   }
 
   constructor (props) {
@@ -39,6 +41,8 @@ class Drawer extends Component {
       open: props.open,
       thumbY: 0,
       startThumbY: 0,
+      thumbX: 0,
+      startThumbX: 0,
       position: 0,
       touching: false,
       listenersAttached: false
@@ -107,6 +111,7 @@ class Drawer extends Component {
       return {
         position: 0,
         thumbY: 0,
+        thumbX: 0,
         touching: false
       }
     })
@@ -150,44 +155,109 @@ class Drawer extends Component {
   onTouchStart = event => {
     // immediately return if disableDrag
     if (this.props.disableDrag) return
-    const startY = event.touches[0].pageY
+    const { pageY, pageX } = event.touches[0]
 
     this.setState(() => {
       return {
-        thumbY: startY,
-        startThumbY: startY,
+        thumbY: pageY,
+        startThumbY: pageY,
+        thumbX: pageX,
+        startThumbX: pageX,
         touching: true
       }
     })
   }
 
+  // onTouchMove = event => {
+  //   // immediately return if disableDrag
+  //   if (this.props.disableDrag) return
+
+  //   // stop android's pull to refresh behavior
+  //   event.preventDefault()
+
+  //   const movingPosition = event.touches[0].pageY
+  //   const delta = movingPosition - this.state.thumbY
+  //   const position = this.state.position + delta
+  //   const atBottom = position < this.NEGATIVE_SCROLL
+
+  //   if (this.props.onDrag) {
+  //     this.props.onDrag(position)
+  //   }
+
+  //   if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
+  //     this.props.notifyWillClose(true)
+  //   } else {
+  //     this.props.notifyWillClose(false)
+  //   }
+
+  //   if (!atBottom) {
+  //     this.setState(() => {
+  //       return {
+  //         thumbY: movingPosition,
+  //         position: this.state.position + delta
+  //       }
+  //     })
+  //   }
+  // }
+
   onTouchMove = event => {
     // immediately return if disableDrag
     if (this.props.disableDrag) return
 
+    const { direction } = this.props
+    const { startY, startX, position, thumbX, thumbY } = this.state
+
     // stop android's pull to refresh behavior
     event.preventDefault()
 
-    const movingPosition = event.touches[0].pageY
-    const delta = movingPosition - this.state.thumbY
-    const position = this.state.position + delta
-    const atBottom = position < this.NEGATIVE_SCROLL
+    const movingPositionY = event.touches[0].pageY
+    const movingPositionX = event.touches[0].pageX
 
-    if (this.props.onDrag) {
-      this.props.onDrag(position)
+    const deltaY = movingPositionY - thumbY
+    const positionY = position + deltaY
+
+    const deltaX = movingPositionX - thumbX
+    const positionX = position + deltaX
+
+    let newPosition = null
+    let movingPosition = null
+    let start = null
+    let delta = null
+    let doWeClose = null
+
+    if (direction === 'x') {
+      newPosition = positionX
+      movingPosition = movingPositionX
+      start = startX
+      delta = deltaX
+      doWeClose = newPosition >= 0 && movingPosition - start < this.SCROLL_TO_CLOSE
+    } else {
+      newPosition = positionY
+      movingPosition = movingPositionY
+      start = startY
+      delta = deltaY
+      doWeClose = newPosition >= 0 && movingPosition - start > this.SCROLL_TO_CLOSE
     }
 
-    if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
+    const atBottom = newPosition < this.NEGATIVE_SCROLL
+
+    if (this.props.onDrag) {
+      this.props.onDrag(newPosition)
+    }
+
+    if (doWeClose) {
       this.props.notifyWillClose(true)
     } else {
       this.props.notifyWillClose(false)
     }
 
     if (!atBottom) {
+      const translate = direction === 'x' ? position - delta : position + delta
       this.setState(() => {
         return {
           thumbY: movingPosition,
-          position: this.state.position + delta
+          thumbX: movingPosition,
+          position: translate
         }
       })
     }
@@ -205,7 +275,24 @@ class Drawer extends Component {
       }
     })
 
-    if (this.state.position >= 0 && this.state.thumbY - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
+    const { position, thumbY, thumbX, startThumbY, startThumbX } = this.state
+    const { direction } = this.props
+
+    let thumb = null
+    let start = null
+    let doWeClose = false
+
+    if (direction === 'y') {
+      thumb = thumbY
+      start = startThumbY
+      doWeClose = position >= 0 && thumb - start > this.SCROLL_TO_CLOSE
+    } else {
+      thumb = thumbX
+      start = startThumbX
+      doWeClose = position >= 0 && thumb - start < this.SCROLL_TO_CLOSE
+    }
+
+    if (doWeClose) {
       this.hideDrawer()
     }
   }
@@ -217,6 +304,7 @@ class Drawer extends Component {
         return {
           position: 0,
           thumbY: 0,
+          thumbX: 0,
           touching: false
         }
       })
@@ -245,6 +333,16 @@ class Drawer extends Component {
     }
   }
 
+  getStyle = value => {
+    const { direction } = this.props
+
+    if (direction === 'y') {
+      return {transform: `translateY(${value}px)`}
+    } else {
+      return {transform: `translateX(-${value}px)`}
+    }
+  }
+
   render () {
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
@@ -266,16 +364,16 @@ class Drawer extends Component {
     return (
       <Motion
         style={{
-          translateY: spring(open ? position : window.innerHeight, animationSpring),
+          translateValue: spring(open ? position : window.innerHeight, animationSpring),
           opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
         }}
         defaultStyle={{
           opacity: 0,
-          translateY: window.innerHeight
+          translateValue: window.innerHeight
         }}
         onRest={this.props.onRest}
       >
-        {({ translateY, opacity }) => {
+        {({ translateValue, opacity }) => {
           return (
             <div
               style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
@@ -285,7 +383,7 @@ class Drawer extends Component {
               <div
                 onClick={e => e.stopPropagation()}
                 onKeyDown={this.onKeyDown}
-                style={{transform: `translateY(${translateY}px)`}}
+                style={this.getStyle(translateValue)}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
                 tabIndex={this.props.tabIndex || '0'}

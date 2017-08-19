@@ -71,6 +71,7 @@ render () {
 | parentElement | ref | block scrolls on element if you're not using body scrolling | false |
 | spring | Object | React motion spring config | false |
 | escapeClose | Boolean | Close modal if escape button is pressed | false |
+| direction | String | direction to translate drawer | false |
 
 
 Example modal style
@@ -105,7 +106,6 @@ Example modal style
 
 ### TODO
 * Figure out optimal way of handling styling (radium, CSS-Modules, <style jsx>, etc..)
-* Make Drawer dismissable in all swipeable directions (decouple from drag down to dismiss)
 
 ## License
 
