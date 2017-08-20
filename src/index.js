@@ -48,7 +48,11 @@ class Drawer extends Component {
   }
 
   getNegativeScroll = element => {
-    this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollHeight - this.props.maxNegativeScroll
+    if (this.isDirectionVertical()) {
+      this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollHeight - this.props.maxNegativeScroll
+    } else {
+      this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollWidth - this.props.maxNegativeScroll
+    }
 
     if (this.props.saveNegativeScroll) {
       this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, element.scrollHeight)
@@ -148,12 +152,15 @@ class Drawer extends Component {
   onTouchStart = event => {
     // immediately return if disableDrag
     if (this.props.disableDrag) return
-    const startY = event.touches[0].pageY
+
+    const { pageY, pageX } = event.touches[0]
+
+    const start = this.isDirectionVertical() ? pageY : pageX
 
     this.setState(() => {
       return {
-        thumb: startY,
-        start: startY,
+        thumb: start,
+        start: start,
         touching: true
       }
     })
@@ -232,7 +239,8 @@ class Drawer extends Component {
     this.setState(() => {
       return {
         position: 0,
-        touching: false
+        touching: false,
+        thumb: 0
       }
     })
 
@@ -266,8 +274,6 @@ class Drawer extends Component {
   }
 
   getElementSize = () => {
-    const { direction } = this.props
-
     return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
   }
 
