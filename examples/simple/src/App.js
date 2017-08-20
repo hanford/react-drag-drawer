@@ -23,6 +23,10 @@ export default class App extends Component {
     })
   }
 
+  notifyWillClose = value => {
+    console.log('notifyWillClose', value)
+  }
+
   render () {
     const { open } = this.state
 
@@ -36,7 +40,13 @@ export default class App extends Component {
 
         <button onClick={this.toggle} className='toggle'>Open drawer!</button>
 
-        <Drawer open={open} onRequestClose={this.toggle} modalElementClass='modalEl' direction='y'>
+        <Drawer
+          open={open}
+          onRequestClose={this.toggle}
+          modalElementClass='modalEl'
+          direction='x'
+          notifyWillClose={this.notifyWillClose}
+        >
           <div className='card'>
             <br />
             I'm in a drawer!

@@ -59,6 +59,7 @@ render () {
 | onRequestClose | Function| null | true |
 | onDrag | Function| invoked on drag | false |
 | onOpen | Function| invoked on drawer focus | false |
+| notifyWillClose | Function| notify HOC if the drawer will close | false |
 | onClose | Function| invoked on drawer close | false |
 | onRest | Function| invoked on finish of open/close animation | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
@@ -72,7 +73,6 @@ render () {
 | spring | Object | React motion spring config | false |
 | escapeClose | Boolean | Close modal if escape button is pressed | false |
 | direction | String | direction to translate drawer | false |
-
 
 Example modal style
 ```css

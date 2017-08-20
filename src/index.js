@@ -15,13 +15,13 @@ class Drawer extends Component {
     overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
-    direction: PropTypes.string,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
     onRest: PropTypes.func,
     disableDrag: PropTypes.bool,
     maxNegativeScroll: PropTypes.number.isRequired,
-    notifyWillClose: PropTypes.func
+    notifyWillClose: PropTypes.func,
+    direction: PropTypes.string
   }
 
   static defaultProps = {
@@ -31,34 +31,24 @@ class Drawer extends Component {
     notifyWillClose: () => {},
     spring: {damping: 20, stiffness: 300},
     escapeClose: false,
-    direction: 'y'
+    direction: 'y',
+    parentElement: document.body,
+    scrollToClose: 50,
+    overlayOpacity: 0.6,
+    allowClose: true
   }
 
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      open: props.open,
-      thumbY: 0,
-      startThumbY: 0,
-      thumbX: 0,
-      startThumbX: 0,
-      position: 0,
-      touching: false,
-      listenersAttached: false
-    }
-
-    // Background opacity controls the darkness of the overlay background. More means a darker background.
-    this.BACKGROUND_OPACITY = props.overlayOpacity || 0.6
-    this.SCROLL_TO_CLOSE = props.scrollToClose || 50
-    this.parentElement = props.parentElement || document.body
-
-    // typeof check, because false will otherwise be ignored
-    this.allowClose = props.allowClose || (typeof props.allowClose !== 'boolean')
+  state = {
+    open: this.props.open,
+    thumb: 0,
+    start: 0,
+    position: 0,
+    touching: false,
+    listenersAttached: false
   }
 
   getNegativeScroll = element => {
-    this.NEGATIVE_SCROLL = window.innerHeight - element.scrollHeight - this.props.maxNegativeScroll
+    this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollHeight - this.props.maxNegativeScroll
 
     if (this.props.saveNegativeScroll) {
       this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, element.scrollHeight)
@@ -110,8 +100,7 @@ class Drawer extends Component {
     this.setState(() => {
       return {
         position: 0,
-        thumbY: 0,
-        thumbX: 0,
+        thumb: 0,
         touching: false
       }
     })
@@ -122,12 +111,15 @@ class Drawer extends Component {
   }
 
   attachListeners = () => {
-    // only attach listeners once as this function gets called every re-render
-    if (this.props.disableDrag || this.state.listenersAttached) return
+    const { parentElement, disableDrag }  = this.props
+    const { listenersAttached } = this.state
 
-    this.parentElement.addEventListener('touchmove', this.preventDefault)
-    this.parentElement.addEventListener('scroll', this.preventDefault)
-    this.parentElement.addEventListener('mousewheel', this.preventDefault)
+    // only attach listeners once as this function gets called every re-render
+    if (disableDrag || listenersAttached) return
+
+    parentElement.addEventListener('touchmove', this.preventDefault)
+    parentElement.addEventListener('scroll', this.preventDefault)
+    parentElement.addEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
     this.drawer.addEventListener('touchend', this.onTouchEnd)
@@ -138,11 +130,12 @@ class Drawer extends Component {
   }
 
   removeListeners = () => {
-    if (this.props.disableDrag) return
+    const { parentElement, disableDrag } = this.props
+    if (disableDrag) return
 
-    this.parentElement.removeEventListener('touchmove', this.preventDefault)
-    this.parentElement.removeEventListener('scroll', this.preventDefault)
-    this.parentElement.removeEventListener('mousewheel', this.preventDefault)
+    parentElement.removeEventListener('touchmove', this.preventDefault)
+    parentElement.removeEventListener('scroll', this.preventDefault)
+    parentElement.removeEventListener('mousewheel', this.preventDefault)
 
     if (!this.drawer) return
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
@@ -155,156 +148,82 @@ class Drawer extends Component {
   onTouchStart = event => {
     // immediately return if disableDrag
     if (this.props.disableDrag) return
-    const { pageY, pageX } = event.touches[0]
+    const startY = event.touches[0].pageY
 
     this.setState(() => {
       return {
-        thumbY: pageY,
-        startThumbY: pageY,
-        thumbX: pageX,
-        startThumbX: pageX,
+        thumb: startY,
+        start: startY,
         touching: true
       }
     })
   }
 
-  // onTouchMove = event => {
-  //   // immediately return if disableDrag
-  //   if (this.props.disableDrag) return
-
-  //   // stop android's pull to refresh behavior
-  //   event.preventDefault()
-
-  //   const movingPosition = event.touches[0].pageY
-  //   const delta = movingPosition - this.state.thumbY
-  //   const position = this.state.position + delta
-  //   const atBottom = position < this.NEGATIVE_SCROLL
-
-  //   if (this.props.onDrag) {
-  //     this.props.onDrag(position)
-  //   }
-
-  //   if (position >= 0 && movingPosition - this.state.startThumbY > this.SCROLL_TO_CLOSE) {
-  //     this.props.notifyWillClose(true)
-  //   } else {
-  //     this.props.notifyWillClose(false)
-  //   }
-
-  //   if (!atBottom) {
-  //     this.setState(() => {
-  //       return {
-  //         thumbY: movingPosition,
-  //         position: this.state.position + delta
-  //       }
-  //     })
-  //   }
-  // }
-
   onTouchMove = event => {
-    // immediately return if disableDrag
-    if (this.props.disableDrag) return
+    const { disableDrag, scrollToClose } = this.props
+    const { thumb, start, position } = this.state
 
-    const { direction } = this.props
-    const { startY, startX, position, thumbX, thumbY } = this.state
+    // immediately return if disableDrag
+    if (disableDrag) return
 
     // stop android's pull to refresh behavior
     event.preventDefault()
 
-    const movingPositionY = event.touches[0].pageY
-    const movingPositionX = event.touches[0].pageX
+    const { pageY, pageX } = event.touches[0]
 
-    const deltaY = movingPositionY - thumbY
-    const positionY = position + deltaY
+    const movingPosition = this.isDirectionVertical() ? pageY : pageX
+    const delta = movingPosition - thumb
 
-    const deltaX = movingPositionX - thumbX
-    const positionX = position + deltaX
-
-    let newPosition = null
-    let movingPosition = null
-    let start = null
-    let delta = null
-    let doWeClose = null
-
-    if (direction === 'x') {
-      newPosition = positionX
-      movingPosition = movingPositionX
-      start = startX
-      delta = deltaX
-      doWeClose = newPosition >= 0 && movingPosition - start < this.SCROLL_TO_CLOSE
-    } else {
-      newPosition = positionY
-      movingPosition = movingPositionY
-      start = startY
-      delta = deltaY
-      doWeClose = newPosition >= 0 && movingPosition - start > this.SCROLL_TO_CLOSE
-    }
-
+    const newPosition = this.isDirectionVertical() ? position + delta : position - delta
     const atBottom = newPosition < this.NEGATIVE_SCROLL
 
     if (this.props.onDrag) {
       this.props.onDrag(newPosition)
     }
 
-    if (doWeClose) {
+    if (newPosition >= 0 && this.shouldWeCloseDrawer(movingPosition)) {
       this.props.notifyWillClose(true)
     } else {
       this.props.notifyWillClose(false)
     }
 
     if (!atBottom) {
-      const translate = direction === 'x' ? position - delta : position + delta
       this.setState(() => {
         return {
-          thumbY: movingPosition,
-          thumbX: movingPosition,
-          position: translate
+          thumb: movingPosition,
+          position: newPosition
         }
       })
     }
   }
 
   onTouchEnd = event => {
+    const { scrollToClose, disableDrag } = this.props
+    const { thumb, position, start } = this.state
+
     // immediately return if disableDrag
-    if (this.props.disableDrag) return
+    if (disableDrag) return
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
     this.setState(() => {
       return {
-        touch: false
+        touching: false
       }
     })
 
-    const { position, thumbY, thumbX, startThumbY, startThumbX } = this.state
-    const { direction } = this.props
-
-    let thumb = null
-    let start = null
-    let doWeClose = false
-
-    if (direction === 'y') {
-      thumb = thumbY
-      start = startThumbY
-      doWeClose = position >= 0 && thumb - start > this.SCROLL_TO_CLOSE
-    } else {
-      thumb = thumbX
-      start = startThumbX
-      doWeClose = position >= 0 && thumb - start < this.SCROLL_TO_CLOSE
-    }
-
-    if (doWeClose) {
+    if (this.shouldWeCloseDrawer(thumb)) {
       this.hideDrawer()
     }
   }
 
   hideDrawer = () => {
     // if we aren't going to allow close, let's animate back to the default position
-    if (this.allowClose === false) {
+    if (this.props.allowClose === false) {
       return this.setState(() => {
         return {
           position: 0,
-          thumbY: 0,
-          thumbX: 0,
+          thumb: 0,
           touching: false
         }
       })
@@ -333,21 +252,33 @@ class Drawer extends Component {
     }
   }
 
-  getStyle = value => {
+  shouldWeCloseDrawer = (position) => {
+    const { scrollToClose } = this.props
+    const { start } = this.state
+
+    return this.isDirectionVertical() ? position - start > scrollToClose : start - position > scrollToClose
+  }
+
+  getDrawerStyle = value => {
     const { direction } = this.props
 
-    if (direction === 'y') {
-      return {transform: `translateY(${value}px)`}
-    } else {
-      return {transform: `translateX(-${value}px)`}
-    }
+    return this.isDirectionVertical() ? {transform: `translateY(${value}px)`} : {transform: `translateX(-${value}px)`}
+  }
+
+  getElementSize = () => {
+    const { direction } = this.props
+
+    return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
+  }
+
+  isDirectionVertical = () => {
+    return this.props.direction === 'y'
   }
 
   render () {
+    const { overlayOpacity, spring: animSpring, containerStyle } = this.props
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
-
-    const { containerStyle } = this.props
 
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
@@ -359,21 +290,21 @@ class Drawer extends Component {
       this.attachListeners()
     }
 
-    const animationSpring = touching ? this.props.spring : presets.stiff
+    const animationSpring = touching ? animSpring : presets.stiff
 
     return (
       <Motion
         style={{
-          translateValue: spring(open ? position : window.innerHeight, animationSpring),
-          opacity: spring(open ? this.BACKGROUND_OPACITY : 0)
+          translate: spring(open ? position : this.getElementSize(), animationSpring),
+          opacity: spring(open ? overlayOpacity : 0)
         }}
         defaultStyle={{
           opacity: 0,
-          translateValue: window.innerHeight
+          translate: this.getElementSize()
         }}
         onRest={this.props.onRest}
       >
-        {({ translateValue, opacity }) => {
+        {({ translate, opacity }) => {
           return (
             <div
               style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
@@ -383,7 +314,7 @@ class Drawer extends Component {
               <div
                 onClick={e => e.stopPropagation()}
                 onKeyDown={this.onKeyDown}
-                style={this.getStyle(translateValue)}
+                style={this.getDrawerStyle(translate)}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
                 tabIndex={this.props.tabIndex || '0'}
