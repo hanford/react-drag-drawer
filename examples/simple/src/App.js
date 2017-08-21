@@ -44,7 +44,7 @@ export default class App extends Component {
           open={open}
           onRequestClose={this.toggle}
           modalElementClass='modalEl'
-          direction='x'
+          direction='y'
           notifyWillClose={this.notifyWillClose}
         >
           <div className='card'>

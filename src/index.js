@@ -48,14 +48,16 @@ class Drawer extends Component {
   }
 
   getNegativeScroll = element => {
+    const size = this.getElementSize()
+
     if (this.isDirectionVertical()) {
-      this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollHeight - this.props.maxNegativeScroll
+      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
     } else {
-      this.NEGATIVE_SCROLL = this.getElementSize() - element.scrollWidth - this.props.maxNegativeScroll
+      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
     }
 
     if (this.props.saveNegativeScroll) {
-      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, element.scrollHeight)
+      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
     }
   }
 
@@ -188,7 +190,11 @@ class Drawer extends Component {
       this.props.onDrag(newPosition)
     }
 
-    if (newPosition >= 0 && this.shouldWeCloseDrawer(movingPosition)) {
+    // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
+    // value in time
+    this.MOVING_POSITION = movingPosition
+
+    if (newPosition >= 0 && this.shouldWeCloseDrawer()) {
       this.props.notifyWillClose(true)
     } else {
       this.props.notifyWillClose(false)
@@ -219,7 +225,7 @@ class Drawer extends Component {
       }
     })
 
-    if (this.shouldWeCloseDrawer(thumb)) {
+    if (this.shouldWeCloseDrawer()) {
       this.hideDrawer()
     }
   }
@@ -239,8 +245,7 @@ class Drawer extends Component {
     this.setState(() => {
       return {
         position: 0,
-        touching: false,
-        thumb: 0
+        touching: false
       }
     })
 
@@ -260,11 +265,11 @@ class Drawer extends Component {
     }
   }
 
-  shouldWeCloseDrawer = (position) => {
+  shouldWeCloseDrawer = () => {
     const { scrollToClose } = this.props
     const { start } = this.state
 
-    return this.isDirectionVertical() ? position - start > scrollToClose : start - position > scrollToClose
+    return this.MOVING_POSITION - start > scrollToClose
   }
 
   getDrawerStyle = value => {
