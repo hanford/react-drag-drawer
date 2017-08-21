@@ -193,6 +193,7 @@ class Drawer extends Component {
     // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
     // value in time
     this.MOVING_POSITION = movingPosition
+    this.NEW_POSTION = newPosition
 
     if (newPosition >= 0 && this.shouldWeCloseDrawer()) {
       this.props.notifyWillClose(true)
@@ -211,11 +212,12 @@ class Drawer extends Component {
   }
 
   onTouchEnd = event => {
-    const { scrollToClose, disableDrag } = this.props
-    const { thumb, position, start } = this.state
+    const { disableDrag } = this.props
+    const { start } = this.state
 
     // immediately return if disableDrag
     if (disableDrag) return
+
     // dont hide the drawer unless the user was trying to drag it to a hidden state,
     // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
     // we automatically hide the drawer
@@ -269,7 +271,9 @@ class Drawer extends Component {
     const { scrollToClose } = this.props
     const { start } = this.state
 
-    return this.isDirectionVertical() ? this.MOVING_POSITION - start > scrollToClose : start - this.MOVING_POSITION > scrollToClose
+    return this.isDirectionVertical()
+      ? this.NEW_POSTION >= 0 && this.MOVING_POSITION - start > scrollToClose
+      : this.NEW_POSTION >= 0 && start - this.MOVING_POSITION > scrollToClose
   }
 
   getDrawerStyle = value => {
