@@ -269,7 +269,7 @@ class Drawer extends Component {
     const { scrollToClose } = this.props
     const { start } = this.state
 
-    return this.MOVING_POSITION - start > scrollToClose
+    return this.isDirectionVertical() ? this.MOVING_POSITION - start > scrollToClose : start - this.MOVING_POSITION > scrollToClose
   }
 
   getDrawerStyle = value => {
