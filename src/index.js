@@ -116,6 +116,10 @@ class Drawer extends Component {
     e.preventDefault()
   }
 
+  setPosition = position => {
+    this.setState({ position })
+  }
+
   attachListeners = () => {
     const { parentElement, disableDrag }  = this.props
     const { listenersAttached } = this.state
