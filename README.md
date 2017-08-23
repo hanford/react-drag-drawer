@@ -73,6 +73,7 @@ render () {
 | spring | Object | React motion spring config | false |
 | escapeClose | Boolean | Close modal if escape button is pressed | false |
 | direction | String | direction to translate drawer | false |
+| dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
 
 Example modal style
 ```css

@@ -35,7 +35,8 @@ class Drawer extends Component {
     parentElement: document.body,
     scrollToClose: 50,
     overlayOpacity: 0.6,
-    allowClose: true
+    allowClose: true,
+    dontApplyListeners: false
   }
 
   state = {
@@ -295,7 +296,8 @@ class Drawer extends Component {
   }
 
   render () {
-    const { overlayOpacity, spring: animSpring, containerStyle } = this.props
+    const { overlayOpacity, spring: animSpring, containerStyle, dontApplyListeners } = this.props
+
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
 
@@ -304,7 +306,7 @@ class Drawer extends Component {
 
     const { position, touching } = this.state
 
-    if (open) {
+    if (open && !dontApplyListeners) {
       // if our drawer is open, let's attach the listeners
       this.attachListeners()
     }
