@@ -74,6 +74,7 @@ render () {
 | escapeClose | Boolean | Close modal if escape button is pressed | false |
 | direction | String | direction to translate drawer | false |
 | dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
+| kinetic | Boolean | offload scrolling logic to [kinetic-react](https://github.com/hanford/kinetic-react) | false |
 
 Example modal style
 ```css

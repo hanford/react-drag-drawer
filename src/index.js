@@ -3,6 +3,7 @@ import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
+import Kinetic from 'kinetic-react'
 
 class Drawer extends Component {
 
@@ -36,7 +37,8 @@ class Drawer extends Component {
     scrollToClose: 50,
     overlayOpacity: 0.6,
     allowClose: true,
-    dontApplyListeners: false
+    dontApplyListeners: false,
+    kinetic: false
   }
 
   state = {
@@ -115,6 +117,17 @@ class Drawer extends Component {
 
   preventDefault = e => {
     e.preventDefault()
+  }
+
+  setKineticPosition = ({ position, pressed }) => {
+    const { scrollToClose } = this.props
+
+    // flip values
+    const pos = position > 0 ? -Math.abs(position) : Math.abs(position)
+
+    const toPos = scrollToClose < pos && !pressed ? scrollToClose : pos
+
+    this.setPosition(toPos)
   }
 
   setPosition = position => {
@@ -340,6 +353,18 @@ class Drawer extends Component {
                 className={this.props.modalElementClass || ''}
                 tabIndex={this.props.tabIndex || '0'}
               >
+
+                {
+                  this.drawer && this.props.kinetic
+                  && (
+                    <Kinetic
+                      max={Math.abs(this.NEGATIVE_SCROLL)}
+                      element={this.drawer}
+                      broadcast={this.setKineticPosition}
+                    />
+                  )
+                }
+
                 {this.props.children}
               </div>
 
