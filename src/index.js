@@ -127,6 +127,10 @@ class Drawer extends Component {
 
     const toPos = scrollToClose < pos && !pressed ? scrollToClose : pos
 
+    if (this.props.onDrag) {
+      this.props.onDrag(toPos)
+    }
+
     this.setPosition(toPos)
   }
 
