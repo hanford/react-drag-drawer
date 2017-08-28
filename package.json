@@ -13,7 +13,8 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "webpack -p"
+    "build": "webpack -p",
+    "prepublish": "npm run build"
   },
   "authors": [
     "Jack Hanford"
@@ -32,7 +33,7 @@
   },
   "dependencies": {
     "global": "~4.3.1",
-    "kinetic-react": "~0.3.0",
+    "kinetic-react": "~0.4.0",
     "prop-types": "~15.5.8",
     "react-motion": "~0.4.7"
   },
