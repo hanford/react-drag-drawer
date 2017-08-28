@@ -3,7 +3,7 @@ import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
-import Kinetic from 'kinetic-react'
+import Kinetic from 'react-flick-list'
 
 class Drawer extends Component {
 

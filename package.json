@@ -33,8 +33,8 @@
   },
   "dependencies": {
     "global": "~4.3.1",
-    "kinetic-react": "~0.4.0",
     "prop-types": "~15.5.8",
+    "react-flick-list": "~0.4.2",
     "react-motion": "~0.4.7"
   },
   "peerDependencies": {
