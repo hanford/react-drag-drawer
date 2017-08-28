@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "global": "~4.3.1",
-    "kinetic-react": "~0.1.1",
+    "kinetic-react": "~0.2.0",
     "prop-types": "~15.5.8",
     "react-motion": "~0.4.7"
   },
