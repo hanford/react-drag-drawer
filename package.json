@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "authors": [
     "Jack Hanford"
