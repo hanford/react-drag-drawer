@@ -47,7 +47,8 @@ class Drawer extends Component {
     start: 0,
     position: 0,
     touching: false,
-    listenersAttached: false
+    listenersAttached: false,
+    stopKinetic: false
   }
 
   getNegativeScroll = element => {
@@ -132,6 +133,20 @@ class Drawer extends Component {
     }
 
     this.setPosition(toPos)
+  }
+
+  setDrawerPosition = position => {
+    const { kinetic } = this.props
+
+    if (kinetic) {
+      this.setState({stopKinetic: true}, () => {
+        setTimeout(() => {
+          this.setState({stopKinetic: false})
+        }, 200)
+      })
+    }
+
+    this.setState({ position, thumb: 0, start: 0 })
   }
 
   setPosition = position => {
@@ -362,6 +377,7 @@ class Drawer extends Component {
                   this.drawer && this.props.kinetic
                   && (
                     <Kinetic
+                      stop={this.state.stopKinetic}
                       max={Math.abs(this.NEGATIVE_SCROLL)}
                       element={this.drawer}
                       broadcast={this.setKineticPosition}
