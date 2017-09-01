@@ -197,7 +197,7 @@ class Drawer extends Component {
     const start = this.isDirectionVertical() ? pageY : pageX
 
     // reset NEW_POSITION and MOVING_POSITION
-    this.NEW_POSTION = 0
+    this.NEW_POSITION = 0
     this.MOVING_POSITION = 0
 
     this.setState(() => {
@@ -234,7 +234,7 @@ class Drawer extends Component {
     // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
     // value in time
     this.MOVING_POSITION = movingPosition
-    this.NEW_POSTION = newPosition
+    this.NEW_POSITION = newPosition
 
     if (newPosition >= 0 && this.shouldWeCloseDrawer()) {
       this.props.notifyWillClose(true)
@@ -316,8 +316,8 @@ class Drawer extends Component {
     if (this.MOVING_POSITION === 0) return
 
     return this.isDirectionVertical()
-      ? this.NEW_POSTION >= 0 && this.MOVING_POSITION - start > scrollToClose
-      : this.NEW_POSTION >= 0 && start - this.MOVING_POSITION > scrollToClose
+      ? this.NEW_POSITION >= 0 && this.MOVING_POSITION - start > scrollToClose
+      : this.NEW_POSITION >= 0 && start - this.MOVING_POSITION > scrollToClose
   }
 
   getDrawerStyle = value => {
