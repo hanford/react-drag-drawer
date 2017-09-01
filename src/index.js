@@ -196,6 +196,10 @@ class Drawer extends Component {
 
     const start = this.isDirectionVertical() ? pageY : pageX
 
+    // reset NEW_POSITION and MOVING_POSITION
+    this.NEW_POSTION = 0
+    this.MOVING_POSITION = 0
+
     this.setState(() => {
       return {
         thumb: start,
@@ -308,6 +312,9 @@ class Drawer extends Component {
     const { scrollToClose } = this.props
     const { start } = this.state
 
+    // no drag occurred!
+    if (this.MOVING_POSITION === 0) return
+
     return this.isDirectionVertical()
       ? this.NEW_POSTION >= 0 && this.MOVING_POSITION - start > scrollToClose
       : this.NEW_POSTION >= 0 && start - this.MOVING_POSITION > scrollToClose
@@ -326,6 +333,8 @@ class Drawer extends Component {
   isDirectionVertical = () => {
     return this.props.direction === 'y'
   }
+
+  stopPropagation = event => event.stopPropagation()
 
   render () {
     const { overlayOpacity, spring: animSpring, containerStyle, dontApplyListeners } = this.props
@@ -365,7 +374,7 @@ class Drawer extends Component {
               className='drawerContainer'
             >
               <div
-                onClick={e => e.stopPropagation()}
+                onClick={this.stopPropagation}
                 onKeyDown={this.onKeyDown}
                 style={this.getDrawerStyle(translate)}
                 ref={drawer => { this.drawer = drawer }}
