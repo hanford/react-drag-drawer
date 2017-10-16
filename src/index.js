@@ -154,11 +154,11 @@ class Drawer extends Component {
   }
 
   attachListeners = () => {
-    const { parentElement, disableDrag }  = this.props
+    const { parentElement, disableDrag, dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
 
     // only attach listeners once as this function gets called every re-render
-    if (disableDrag || listenersAttached) return
+    if (disableDrag || listenersAttached || dontApplyListeners) return
 
     parentElement.addEventListener('touchmove', this.preventDefault)
     parentElement.addEventListener('scroll', this.preventDefault)
