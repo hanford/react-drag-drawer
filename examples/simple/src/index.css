@@ -10,7 +10,7 @@ body {
 
 @media(max-width: 767px) {
   .modalEl {
-    height: 2000px;
+    height: 100%;
     width: 100%;
   }
 }
