@@ -9,11 +9,7 @@
 ## Install
 
 ```
-/* React */
-$ npm install react-drag-drawer react-motion --save
-
-/* Preact */
-$ npm install react-drag-drawer preact-motion --save
+$ npm install react-drag-drawer --save
 ```
 
 

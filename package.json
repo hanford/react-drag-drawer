@@ -2,7 +2,7 @@
   "name": "react-drag-drawer",
   "version": "1.12.2",
   "description": "Draggable react drawer",
-  "main": "./dist/react-drag-drawer.min.js",
+  "main": "./dist/react-drag-drawer.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/hanford/react-drag-drawer.git"
@@ -13,7 +13,8 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "webpack -p",
+    "build": "npx babel src/index.js --out-file dist/react-drag-drawer.js",
+    "watch": "npx babel src/index.js  --watch --out-file dist/react-drag-drawer.js",
     "prepare": "npm run build"
   },
   "authors": [
@@ -21,25 +22,24 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "~6.26.0",
     "babel-core": "~6.24.1",
-    "babel-loader": "~6.4.1",
     "babel-preset-env": "~1.5.2",
     "babel-preset-react": "~6.24.1",
     "babel-preset-stage-0": "~6.24.1",
     "react": "~15.5.3",
-    "react-dom": "~15.5.3",
-    "styled-jsx": "~0.5.7",
-    "webpack": "~2.3.3"
+    "react-dom": "~15.5.3"
   },
   "dependencies": {
     "global": "~4.3.1",
     "prop-types": "~15.5.8",
     "react-flick-list": "~0.5.0",
-    "react-motion": "~0.4.7"
+    "react-motion": "~0.5.2",
+    "styled-jsx": "~2.2.1"
   },
   "peerDependencies": {
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "tags": [
     "react",
