@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import Drawer from 'react-drag-drawer'
-
 import './App.css'
 import GithubBadge from 'react-github-badge'
 
 export default class App extends Component {
-  constructor () {
-    super()
+ constructor () {
+   super()
 
     this.state = {
       open: false
