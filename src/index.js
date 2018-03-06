@@ -31,7 +31,6 @@ class Drawer extends Component {
     disableDrag: false,
     notifyWillClose: () => {},
     spring: {damping: 20, stiffness: 300},
-    escapeClose: false,
     direction: 'y',
     parentElement: document.body,
     scrollToClose: 50,
@@ -66,6 +65,10 @@ class Drawer extends Component {
   }
 
   componentDidMount () {
+    if (this.props.escapeClose) {
+      console.warn('escapeClose has been deprecrated, please remove it from react-drag-drawer')
+    }
+
     if (this.drawer) {
       this.getNegativeScroll(this.drawer)
     }
@@ -300,14 +303,6 @@ class Drawer extends Component {
     this.props.onRequestClose()
   }
 
-  onKeyDown = event => {
-    const { escapeClose } = this.props
-
-    if (escapeClose && event.keyCode === 27) {
-      this.hideDrawer()
-    }
-  }
-
   shouldWeCloseDrawer = () => {
     const { scrollToClose } = this.props
     const { start } = this.state
@@ -375,7 +370,6 @@ class Drawer extends Component {
             >
               <div
                 onClick={this.stopPropagation}
-                onKeyDown={this.onKeyDown}
                 style={this.getDrawerStyle(translate)}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
