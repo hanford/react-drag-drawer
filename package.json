@@ -13,8 +13,8 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "npx babel src/index.js --out-file dist/react-drag-drawer.js",
-    "watch": "npx babel src/index.js  --watch --out-file dist/react-drag-drawer.js",
+    "build": "babel src/index.js --out-file dist/react-drag-drawer.js",
+    "watch": "babel src/index.js  --watch --out-file dist/react-drag-drawer.js",
     "prepare": "npm run build"
   },
   "authors": [
@@ -24,18 +24,20 @@
   "devDependencies": {
     "babel-cli": "~6.26.0",
     "babel-core": "~6.24.1",
+    "babel-plugin-emotion": "~9.0.1",
     "babel-preset-env": "~1.5.2",
     "babel-preset-react": "~6.24.1",
     "babel-preset-stage-0": "~6.24.1",
-    "react": "~15.5.3",
-    "react-dom": "~15.5.3"
+    "react": "~16.2.0",
+    "react-dom": "~16.2.0"
   },
   "dependencies": {
+    "emotion": "~9.0.2",
     "global": "~4.3.1",
     "prop-types": "~15.5.8",
+    "react-emotion": "~9.0.2",
     "react-flick-list": "~0.5.0",
-    "react-motion": "~0.5.2",
-    "styled-jsx": "~2.2.1"
+    "react-motion": "~0.5.2"
   },
   "peerDependencies": {
     "react": "^16.0.0",

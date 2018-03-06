@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
 import Kinetic from 'react-flick-list'
+import styled from 'react-emotion'
 
-class Drawer extends Component {
+export default class Drawer extends PureComponent {
 
   static propTypes = {
     open: PropTypes.bool.isRequired,
@@ -98,6 +99,11 @@ class Drawer extends Component {
         this.props.onOpen()
       }
 
+      // if our drawer is openning, let's attach the listeners
+      if (open && !dontApplyListeners) {
+        this.attachListeners()
+      }
+
       this.setState(() => {
         return {
           open: true
@@ -107,7 +113,6 @@ class Drawer extends Component {
   }
 
   componentWillUnmount () {
-    // incase user navigated directly to checkout
     this.removeListeners()
 
     this.setState(() => {
@@ -342,11 +347,6 @@ class Drawer extends Component {
 
     const { position, touching } = this.state
 
-    if (open && !dontApplyListeners) {
-      // if our drawer is open, let's attach the listeners
-      this.attachListeners()
-    }
-
     const animationSpring = touching ? animSpring : presets.stiff
 
     return (
@@ -363,10 +363,9 @@ class Drawer extends Component {
       >
         {({ translate, opacity }) => {
           return (
-            <div
+            <Container
               style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
               onClick={this.hideDrawer}
-              className='drawerContainer'
             >
               <div
                 onClick={this.stopPropagation}
@@ -390,28 +389,7 @@ class Drawer extends Component {
 
                 {this.props.children}
               </div>
-
-              <style jsx>{`
-                .drawerContainer {
-                  position: fixed;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  display: flex;
-                  justify-content: center;
-                  z-index: 11;
-                  align-items: center;
-                }
-
-                @media(max-width: 768px) {
-                  .drawerContainer {
-                    height: 100%;
-                    width: 100%;
-                  }
-                }
-              `}</style>
-            </div>
+            </Container>
           )
         }}
       </Motion>
@@ -419,4 +397,19 @@ class Drawer extends Component {
   }
 }
 
-export default Drawer
+const Container = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 11;
+  align-items: center;
+
+  @media(max-width: 768px) {
+    height: 100%;
+    width: 100%;
+  }
+`
