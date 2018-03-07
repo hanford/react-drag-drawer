@@ -1,8 +1,19 @@
 ## react-drag-drawer
 
+[![Travis][build-badge]][build]
+[![npm package][npm-badge]][npm]
+[![Coveralls][coveralls-badge]][coveralls]
+
 > Mobile draggable drawer that falls back to modals on desktop
 
-<br />
+[build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
+[build]: https://travis-ci.org/user/repo
+
+[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
+[npm]: https://www.npmjs.org/package/npm-package
+
+[coveralls-badge]: https://img.shields.io/coveralls/user/repo/master.png?style=flat-square
+[coveralls]: https://coveralls.io/github/user/repo
 
 [Live demo!](https://react-drag-drawer.jackhanford.com)
 
@@ -61,7 +72,7 @@ render () {
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
 | overlayOpacity | Number | 0.6 unless different value is passed in | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
-| modalElementClass | Object | className to be applied to top <modal> element | false |
+| modalElementClass | Object | className to be applied to top <Drawer> element | false |
 | containerStyle | Object | styles to be applied to the drawer container | false |
 | disableDrag | Boolean | makes the drawer undraggable - basically just a modal | false |
 | maxNegativeScroll | Number | distance a drawer can be dragged above the bottom of the window container | false |
@@ -69,7 +80,6 @@ render () {
 | spring | Object | React motion spring config | false |
 | direction | String | direction to translate drawer | false |
 | dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
-| kinetic | Boolean | offload scrolling logic to [kinetic-react](https://github.com/hanford/kinetic-react) | false |
 
 Example modal style
 ```css
@@ -99,10 +109,6 @@ Example modal style
   }
 }
 ```
-
-
-### TODO
-* Figure out optimal way of handling styling (radium, CSS-Modules, <style jsx>, etc..)
 
 ## License
 

@@ -1,12 +1,12 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import window from 'global/window'
 import document from 'global/document'
 import Kinetic from 'react-flick-list'
-import styled from 'react-emotion'
+import { css } from 'emotion'
 
-export default class Drawer extends PureComponent {
+export default class Drawer extends Component {
 
   static propTypes = {
     open: PropTypes.bool.isRequired,
@@ -99,20 +99,18 @@ export default class Drawer extends PureComponent {
         this.props.onOpen()
       }
 
-      // if our drawer is openning, let's attach the listeners
-      if (open && !dontApplyListeners) {
-        this.attachListeners()
-      }
-
       this.setState(() => {
         return {
           open: true
         }
+      }, () => {
+        this.attachListeners()
       })
     }
   }
 
   componentWillUnmount () {
+    // incase user navigated directly to checkout
     this.removeListeners()
 
     this.setState(() => {
@@ -363,16 +361,16 @@ export default class Drawer extends PureComponent {
       >
         {({ translate, opacity }) => {
           return (
-            <Container
+            <div
               style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
               onClick={this.hideDrawer}
+              className={Container}
             >
               <div
                 onClick={this.stopPropagation}
                 style={this.getDrawerStyle(translate)}
                 ref={drawer => { this.drawer = drawer }}
                 className={this.props.modalElementClass || ''}
-                tabIndex={this.props.tabIndex || '0'}
               >
 
                 {
@@ -389,7 +387,7 @@ export default class Drawer extends PureComponent {
 
                 {this.props.children}
               </div>
-            </Container>
+            </div>
           )
         }}
       </Motion>
@@ -397,7 +395,7 @@ export default class Drawer extends PureComponent {
   }
 }
 
-const Container = styled.div`
+const Container = css`
   position: fixed;
   top: 0;
   left: 0;
@@ -407,6 +405,7 @@ const Container = styled.div`
   justify-content: center;
   z-index: 11;
   align-items: center;
+
 
   @media(max-width: 768px) {
     height: 100%;
