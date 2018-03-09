@@ -406,7 +406,6 @@ const Container = css`
   z-index: 11;
   align-items: center;
 
-
   @media(max-width: 768px) {
     height: 100%;
     width: 100%;
