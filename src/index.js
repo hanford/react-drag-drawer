@@ -5,6 +5,7 @@ import window from 'global/window'
 import document from 'global/document'
 import Kinetic from 'react-flick-list'
 import { css } from 'emotion'
+import {createPortal} from 'react-dom'
 
 export default class Drawer extends Component {
 
@@ -49,20 +50,6 @@ export default class Drawer extends Component {
     touching: false,
     listenersAttached: false,
     stopKinetic: false
-  }
-
-  getNegativeScroll = element => {
-    const size = this.getElementSize()
-
-    if (this.isDirectionVertical()) {
-      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
-    } else {
-      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
-    }
-
-    if (this.props.saveNegativeScroll) {
-      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
-    }
   }
 
   componentDidMount () {
@@ -122,8 +109,18 @@ export default class Drawer extends Component {
     })
   }
 
-  preventDefault = e => {
-    e.preventDefault()
+  getNegativeScroll = element => {
+    const size = this.getElementSize()
+
+    if (this.isDirectionVertical()) {
+      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
+    } else {
+      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
+    }
+
+    if (this.props.saveNegativeScroll) {
+      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
+    }
   }
 
   setKineticPosition = ({ position, pressed }) => {
@@ -153,10 +150,6 @@ export default class Drawer extends Component {
     }
 
     this.setState({ position, thumb: 0, start: 0 })
-  }
-
-  setPosition = position => {
-    this.setState({ position })
   }
 
   attachListeners = () => {
@@ -332,6 +325,14 @@ export default class Drawer extends Component {
     return this.props.direction === 'y'
   }
 
+  setPosition = position => {
+    this.setState({ position })
+  }
+
+  preventDefault = e => {
+    e.preventDefault()
+  }
+
   stopPropagation = event => event.stopPropagation()
 
   render () {
@@ -347,7 +348,7 @@ export default class Drawer extends Component {
 
     const animationSpring = touching ? animSpring : presets.stiff
 
-    return (
+    return createPortal(
       <Motion
         style={{
           translate: spring(open ? position : this.getElementSize(), animationSpring),
@@ -390,7 +391,8 @@ export default class Drawer extends Component {
             </div>
           )
         }}
-      </Motion>
+      </Motion>,
+      this.props.parentElement
     )
   }
 }
