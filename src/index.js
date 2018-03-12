@@ -5,7 +5,7 @@ import window from 'global/window'
 import document from 'global/document'
 import Kinetic from 'react-flick-list'
 import { css } from 'emotion'
-import {createPortal} from 'react-dom'
+import { createPortal } from 'react-dom'
 
 export default class Drawer extends Component {
 
