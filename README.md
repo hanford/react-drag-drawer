@@ -68,7 +68,6 @@ render () {
 | notifyWillClose | Function| notify HOC if the drawer will close | false |
 | onClose | Function| invoked on drawer close | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
-| overlayOpacity | Number | 0.6 unless different value is passed in | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
 | modalElementClass | Object | className to be applied to top <Drawer> element | false |
 | containerStyle | Object | styles to be applied to the drawer container | false |

@@ -15,7 +15,6 @@ export default class Drawer extends Component {
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
-    overlayOpacity: PropTypes.number,
     scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -34,7 +33,6 @@ export default class Drawer extends Component {
     direction: 'y',
     parentElement: document.body,
     scrollToClose: 50,
-    overlayOpacity: 0.6,
     allowClose: true,
     dontApplyListeners: false,
     kinetic: false
@@ -53,6 +51,14 @@ export default class Drawer extends Component {
   componentDidMount () {
     if (this.props.escapeClose) {
       console.warn('escapeClose has been deprecrated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.overlayOpacity) {
+      console.warn('overlayOpacity has been deprecrated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.onRest) {
+      console.warn('onRest has been deprecrated, please remove it from react-drag-drawer')
     }
 
     if (this.drawer) {
@@ -334,7 +340,7 @@ export default class Drawer extends Component {
   stopPropagation = event => event.stopPropagation()
 
   render () {
-    const { overlayOpacity, spring: animSpring, containerStyle, dontApplyListeners } = this.props
+    const { spring: animSpring, containerStyle, dontApplyListeners } = this.props
 
     // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
     if (!this.props.open && !this.state.open) return <div />
@@ -350,7 +356,7 @@ export default class Drawer extends Component {
       <Motion
         style={{
           translate: spring(open ? position : this.getElementSize(), animationSpring),
-          opacity: spring(open ? overlayOpacity : 0)
+          opacity: spring(open ? 0.6 : 0)
         }}
         defaultStyle={{
           opacity: 0,
