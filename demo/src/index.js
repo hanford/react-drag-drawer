@@ -34,12 +34,12 @@ class Demo extends Component {
       <Fragment>
         <div className={ButtonContainer}>
           <button onClick={this.toggle('regular', true)} className={Toggle}>Open drawer!</button>
-          <br />
+          {/* <br />
           <br />
           <button onClick={this.toggle('jsScroll', true)} className={Toggle}>Huge drawer with kinetic scrolling!</button>
           <br />
           <br />
-          <button onClick={this.toggle('jsScrollAsyncHeight', true)} className={Toggle}>Huge drawer with async height</button>
+          <button onClick={this.toggle('jsScrollAsyncHeight', true)} className={Toggle}>Huge drawer with async height</button> */}
         </div>
 
         <Drawer
@@ -53,7 +53,7 @@ class Demo extends Component {
           </div>
         </Drawer>
 
-        <Drawer
+        {/* <Drawer
           kinetic={true}
           open={jsScroll}
           onRequestClose={this.toggle('jsScroll', false)}
@@ -70,7 +70,7 @@ class Demo extends Component {
           open={jsScrollAsyncHeight}
           onRequestClose={this.toggle('jsScrollAsyncHeight', false)}
           modalElementClass={HugeList}
-        />
+        /> */}
       </Fragment>
     )
   }
