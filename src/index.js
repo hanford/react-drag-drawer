@@ -20,13 +20,11 @@ export default class Drawer extends Component {
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
     disableDrag: PropTypes.bool,
-    maxNegativeScroll: PropTypes.number.isRequired,
     notifyWillClose: PropTypes.func,
     direction: PropTypes.string
   }
 
   static defaultProps = {
-    maxNegativeScroll: 20,
     disableDrag: false,
     notifyWillClose: () => {},
     spring: {damping: 20, stiffness: 300},
@@ -48,6 +46,8 @@ export default class Drawer extends Component {
     stopKinetic: false
   }
 
+  MAX_NEGATIVE_SCROLL = 20
+
   componentDidMount () {
     if (this.props.escapeClose) {
       console.warn('escapeClose has been deprecrated, please remove it from react-drag-drawer')
@@ -59,6 +59,10 @@ export default class Drawer extends Component {
 
     if (this.props.onRest) {
       console.warn('onRest has been deprecrated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.maxNegativeScroll) {
+      console.warn('maxNegativeScroll has been deprecrated, please remove it from react-drag-drawer')
     }
 
     if (this.drawer) {
@@ -94,8 +98,6 @@ export default class Drawer extends Component {
         return {
           open: true
         }
-      }, () => {
-        this.attachListeners()
       })
     }
   }
@@ -113,9 +115,13 @@ export default class Drawer extends Component {
     })
   }
 
-  attachListeners = () => {
+  attachListeners = (drawer) => {
     const { parentElement, disableDrag, dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
+
+    if (!drawer) return
+
+    this.drawer = drawer
 
     // only attach listeners once as this function gets called every re-render
     if (disableDrag || listenersAttached || dontApplyListeners) return
@@ -124,7 +130,6 @@ export default class Drawer extends Component {
     parentElement.addEventListener('scroll', this.preventDefault)
     parentElement.addEventListener('mousewheel', this.preventDefault)
 
-    if (!this.drawer) return
     this.drawer.addEventListener('touchend', this.onTouchEnd)
     this.drawer.addEventListener('touchmove', this.onTouchMove)
     this.drawer.addEventListener('touchstart', this.onTouchStart)
@@ -237,9 +242,9 @@ export default class Drawer extends Component {
     const size = this.getElementSize()
 
     if (this.isDirectionVertical()) {
-      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
+      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.MAX_NEGATIVE_SCROLL
     } else {
-      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
+      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.MAX_NEGATIVE_SCROLL
     }
 
     if (this.props.saveNegativeScroll) {
@@ -343,8 +348,10 @@ export default class Drawer extends Component {
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
 
-    // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
-    if (!open) return <div />
+    if (!this.state.open && !this.props.open) {
+      // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
+      return <div />
+    }
 
     const { position, touching } = this.state
 
@@ -371,7 +378,7 @@ export default class Drawer extends Component {
               <div
                 onClick={this.stopPropagation}
                 style={this.getDrawerStyle(translate)}
-                ref={drawer => { this.drawer = drawer }}
+                ref={this.attachListeners}
                 className={this.props.modalElementClass || ''}
               >
 

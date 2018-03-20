@@ -19,7 +19,7 @@ describe('Drawer', () => {
     node = document.body.appendChild(node)
 
     render(<Drawer parentElement={node} open={true} onRequestClose={() => {}}>I'm a drawer</Drawer>, node, () => {
-      expect(node.innerHTML).toContain(`<div class="">I'm a drawer</div>`)
+      expect(node.innerHTML).toContain("I'm a drawer")
     })
   })
 })

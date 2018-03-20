@@ -34,12 +34,9 @@ class Demo extends Component {
       <Fragment>
         <div className={ButtonContainer}>
           <button onClick={this.toggle('regular', true)} className={Toggle}>Open drawer!</button>
-          {/* <br />
-          <br />
-          <button onClick={this.toggle('jsScroll', true)} className={Toggle}>Huge drawer with kinetic scrolling!</button>
           <br />
           <br />
-          <button onClick={this.toggle('jsScrollAsyncHeight', true)} className={Toggle}>Huge drawer with async height</button> */}
+          <button onClick={this.toggle('jsScrollAsyncHeight', true)} className={Toggle}>Huge drawer with async height</button>
         </div>
 
         <Drawer
@@ -53,24 +50,11 @@ class Demo extends Component {
           </div>
         </Drawer>
 
-        {/* <Drawer
-          kinetic={true}
-          open={jsScroll}
-          onRequestClose={this.toggle('jsScroll', false)}
-          modalElementClass={HugeList}
-        >
-          <div className={Card}>
-            <button className={Toggle} onClick={this.toggle('jsScroll', false)}>Close drawer</button>
-            <div className={Content}>{bigArray.map((_, index) => <div key={index}>{index}</div>)}</div>
-          </div>
-        </Drawer>
-
-
         <AsyncHeightDrawer
           open={jsScrollAsyncHeight}
           onRequestClose={this.toggle('jsScrollAsyncHeight', false)}
           modalElementClass={HugeList}
-        /> */}
+        />
       </Fragment>
     )
   }
@@ -96,7 +80,6 @@ class AsyncHeightDrawer extends Component {
   }
 
   render () {
-    console.log(this.state.asyncData)
     return (
       <Drawer kinetic={true} {...this.props}>
         <div className={Card}>
@@ -114,18 +97,7 @@ const Content = css`
 `
 
 const Card = css`
-  background-color: white;
-  width: 375px;
   height: 100%;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  border-radius: 4px;
-  max-width: 100%;
-  max-height: 100%;
-
-  @media(max-width: 767px) {
-    margin-top: 100px;
-  }
 
   @media(min-width: 768px) {
     height: 300px;
@@ -158,18 +130,26 @@ const Toggle = css`
   }
 `
 
+const modal = css`
+  position: absolute;
+  top: 30px;
+  background-color: white;
+  width: 375px;
+  min-height: 100%;
+`
+
 const ModalElement = css`
+  ${modal}
   text-align: center;
 
   @media(max-width: 767px) {
-    height: 100%;
     width: 100%;
   }
 `
 
 const HugeList = css`
+  ${modal}
   text-align: center;
-  height: 100%;
 
   @media(max-width: 767px) {
     width: 100%;

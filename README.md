@@ -72,7 +72,6 @@ render () {
 | modalElementClass | Object | className to be applied to top <Drawer> element | false |
 | containerStyle | Object | styles to be applied to the drawer container | false |
 | disableDrag | Boolean | makes the drawer undraggable - basically just a modal | false |
-| maxNegativeScroll | Number | distance a drawer can be dragged above the bottom of the window container | false |
 | parentElement | ref | block scrolls on element if you're not using body scrolling | false |
 | spring | Object | React motion spring config | false |
 | direction | String | direction to translate drawer | false |
