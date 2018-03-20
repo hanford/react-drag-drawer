@@ -113,49 +113,6 @@ export default class Drawer extends Component {
     })
   }
 
-  getNegativeScroll = element => {
-    const size = this.getElementSize()
-
-    if (this.isDirectionVertical()) {
-      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
-    } else {
-      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
-    }
-
-    if (this.props.saveNegativeScroll) {
-      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
-    }
-  }
-
-  setKineticPosition = ({ position, pressed }) => {
-    const { scrollToClose } = this.props
-
-    // flip values
-    const pos = position > 0 ? -Math.abs(position) : Math.abs(position)
-
-    const toPos = scrollToClose < pos && !pressed ? scrollToClose : pos
-
-    if (this.props.onDrag) {
-      this.props.onDrag(toPos)
-    }
-
-    this.setPosition(toPos)
-  }
-
-  setDrawerPosition = position => {
-    const { kinetic } = this.props
-
-    if (kinetic) {
-      this.setState({stopKinetic: true}, () => {
-        setTimeout(() => {
-          this.setState({stopKinetic: false})
-        }, 200)
-      })
-    }
-
-    this.setState({ position, thumb: 0, start: 0 })
-  }
-
   attachListeners = () => {
     const { parentElement, disableDrag, dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
@@ -276,6 +233,49 @@ export default class Drawer extends Component {
     }
   }
 
+  getNegativeScroll = element => {
+    const size = this.getElementSize()
+
+    if (this.isDirectionVertical()) {
+      this.NEGATIVE_SCROLL = size - element.scrollHeight - this.props.maxNegativeScroll
+    } else {
+      this.NEGATIVE_SCROLL = size - element.scrollWidth - this.props.maxNegativeScroll
+    }
+
+    if (this.props.saveNegativeScroll) {
+      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
+    }
+  }
+
+  setKineticPosition = ({ position, pressed }) => {
+    const { scrollToClose } = this.props
+
+    // flip values
+    const pos = position > 0 ? -Math.abs(position) : Math.abs(position)
+
+    const toPos = scrollToClose < pos && !pressed ? scrollToClose : pos
+
+    if (this.props.onDrag) {
+      this.props.onDrag(toPos)
+    }
+
+    this.setPosition(toPos)
+  }
+
+  setDrawerPosition = position => {
+    const { kinetic } = this.props
+
+    if (kinetic) {
+      this.setState({stopKinetic: true}, () => {
+        setTimeout(() => {
+          this.setState({stopKinetic: false})
+        }, 200)
+      })
+    }
+
+    this.setState({ position, thumb: 0, start: 0 })
+  }
+
   hideDrawer = () => {
     // if we aren't going to allow close, let's animate back to the default position
     if (this.props.allowClose === false) {
@@ -333,20 +333,18 @@ export default class Drawer extends Component {
     this.setState({ position })
   }
 
-  preventDefault = e => {
-    e.preventDefault()
-  }
+  preventDefault = event => event.preventDefault()
 
   stopPropagation = event => event.stopPropagation()
 
   render () {
     const { spring: animSpring, containerStyle, dontApplyListeners } = this.props
 
-    // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
-    if (!this.props.open && !this.state.open) return <div />
-
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
+
+    // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
+    if (!open) return <div />
 
     const { position, touching } = this.state
 
