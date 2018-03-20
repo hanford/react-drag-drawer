@@ -68,12 +68,9 @@ render () {
 | notifyWillClose | Function| notify HOC if the drawer will close | false |
 | onClose | Function| invoked on drawer close | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
-| scrollToClose | Number | pixel drag to trigger onRequestClose | false |
 | modalElementClass | Object | className to be applied to top <Drawer> element | false |
 | containerStyle | Object | styles to be applied to the drawer container | false |
-| disableDrag | Boolean | makes the drawer undraggable - basically just a modal | false |
 | parentElement | ref | block scrolls on element if you're not using body scrolling | false |
-| spring | Object | React motion spring config | false |
 | direction | String | direction to translate drawer | false |
 | dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
 

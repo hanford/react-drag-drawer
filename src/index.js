@@ -15,25 +15,21 @@ export default class Drawer extends Component {
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
-    scrollToClose: PropTypes.number,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
-    disableDrag: PropTypes.bool,
     notifyWillClose: PropTypes.func,
     direction: PropTypes.string
   }
 
   static defaultProps = {
-    disableDrag: false,
     notifyWillClose: () => {},
-    spring: {damping: 20, stiffness: 300},
+    onOpen: () => {},
     direction: 'y',
     parentElement: document.body,
-    scrollToClose: 50,
     allowClose: true,
     dontApplyListeners: false,
-    kinetic: false
+    kinetic: false,
   }
 
   state = {
@@ -47,22 +43,35 @@ export default class Drawer extends Component {
   }
 
   MAX_NEGATIVE_SCROLL = 20
+  SCROLL_TO_CLOSE = 75
 
   componentDidMount () {
     if (this.props.escapeClose) {
-      console.warn('escapeClose has been deprecrated, please remove it from react-drag-drawer')
+      console.warn('escapeClose has been deprecated, please remove it from react-drag-drawer')
     }
 
     if (this.props.overlayOpacity) {
-      console.warn('overlayOpacity has been deprecrated, please remove it from react-drag-drawer')
+      console.warn('overlayOpacity has been deprecated, please remove it from react-drag-drawer')
     }
 
     if (this.props.onRest) {
-      console.warn('onRest has been deprecrated, please remove it from react-drag-drawer')
+      console.warn('onRest has been deprecated, please remove it from react-drag-drawer')
     }
 
     if (this.props.maxNegativeScroll) {
-      console.warn('maxNegativeScroll has been deprecrated, please remove it from react-drag-drawer')
+      console.warn('maxNegativeScroll has been deprecated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.disableDrag) {
+      console.warn('disableDrag has been deprecated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.scrollToClose) {
+      console.warn('scrollToClose has been deprecated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.spring) {
+      console.warn('spring has been deprecated, please remove it from react-drag-drawer')
     }
 
     if (this.drawer) {
@@ -90,9 +99,7 @@ export default class Drawer extends Component {
 
     // in the process of opening the drawer
     if (!this.props.open && nextProps.open) {
-      if (this.props.onOpen) {
-        this.props.onOpen()
-      }
+      this.props.onOpen()
 
       this.setState(() => {
         return {
@@ -116,7 +123,7 @@ export default class Drawer extends Component {
   }
 
   attachListeners = (drawer) => {
-    const { parentElement, disableDrag, dontApplyListeners }  = this.props
+    const { parentElement, dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
 
     if (!drawer) return
@@ -124,7 +131,7 @@ export default class Drawer extends Component {
     this.drawer = drawer
 
     // only attach listeners once as this function gets called every re-render
-    if (disableDrag || listenersAttached || dontApplyListeners) return
+    if (listenersAttached || dontApplyListeners) return
 
     parentElement.addEventListener('touchmove', this.preventDefault)
     parentElement.addEventListener('scroll', this.preventDefault)
@@ -138,8 +145,7 @@ export default class Drawer extends Component {
   }
 
   removeListeners = () => {
-    const { parentElement, disableDrag } = this.props
-    if (disableDrag) return
+    const { parentElement } = this.props
 
     parentElement.removeEventListener('touchmove', this.preventDefault)
     parentElement.removeEventListener('scroll', this.preventDefault)
@@ -154,9 +160,6 @@ export default class Drawer extends Component {
   }
 
   onTouchStart = event => {
-    // immediately return if disableDrag
-    if (this.props.disableDrag) return
-
     const { pageY, pageX } = event.touches[0]
 
     const start = this.isDirectionVertical() ? pageY : pageX
@@ -175,11 +178,7 @@ export default class Drawer extends Component {
   }
 
   onTouchMove = event => {
-    const { disableDrag, scrollToClose } = this.props
     const { thumb, start, position } = this.state
-
-    // immediately return if disableDrag
-    if (disableDrag) return
 
     // stop android's pull to refresh behavior
     event.preventDefault()
@@ -221,12 +220,6 @@ export default class Drawer extends Component {
     const { disableDrag } = this.props
     const { start } = this.state
 
-    // immediately return if disableDrag
-    if (disableDrag) return
-
-    // dont hide the drawer unless the user was trying to drag it to a hidden state,
-    // this 50 is a magic number for allowing the user to drag the drawer up to 50pxs before
-    // we automatically hide the drawer
     this.setState(() => {
       return {
         touching: false
@@ -253,12 +246,10 @@ export default class Drawer extends Component {
   }
 
   setKineticPosition = ({ position, pressed }) => {
-    const { scrollToClose } = this.props
-
     // flip values
     const pos = position > 0 ? -Math.abs(position) : Math.abs(position)
 
-    const toPos = scrollToClose < pos && !pressed ? scrollToClose : pos
+    const toPos = this.SCROLL_TO_CLOSE < pos && !pressed ? this.SCROLL_TO_CLOSE : pos
 
     if (this.props.onDrag) {
       this.props.onDrag(toPos)
@@ -309,15 +300,14 @@ export default class Drawer extends Component {
   }
 
   shouldWeCloseDrawer = () => {
-    const { scrollToClose } = this.props
     const { start } = this.state
 
     // no drag occurred!
     if (this.MOVING_POSITION === 0) return
 
     return this.isDirectionVertical()
-      ? this.NEW_POSITION >= 0 && this.MOVING_POSITION - start > scrollToClose
-      : this.NEW_POSITION >= 0 && start - this.MOVING_POSITION > scrollToClose
+      ? this.NEW_POSITION >= 0 && this.MOVING_POSITION - start > this.SCROLL_TO_CLOSE
+      : this.NEW_POSITION >= 0 && start - this.MOVING_POSITION > this.SCROLL_TO_CLOSE
   }
 
   getDrawerStyle = value => {
@@ -339,11 +329,10 @@ export default class Drawer extends Component {
   }
 
   preventDefault = event => event.preventDefault()
-
   stopPropagation = event => event.stopPropagation()
 
   render () {
-    const { spring: animSpring, containerStyle, dontApplyListeners } = this.props
+    const { containerStyle, dontApplyListeners } = this.props
 
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
@@ -355,7 +344,8 @@ export default class Drawer extends Component {
 
     const { position, touching } = this.state
 
-    const animationSpring = touching ? animSpring : presets.stiff
+    // slightly different animation spring when dragging to the drawer doesn't feel sluggish
+    const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
 
     return createPortal(
       <Motion
