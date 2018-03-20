@@ -20,7 +20,6 @@ export default class Drawer extends Component {
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
-    onRest: PropTypes.func,
     disableDrag: PropTypes.bool,
     maxNegativeScroll: PropTypes.number.isRequired,
     notifyWillClose: PropTypes.func,
@@ -28,7 +27,6 @@ export default class Drawer extends Component {
   }
 
   static defaultProps = {
-    onRest: () => {},
     maxNegativeScroll: 20,
     disableDrag: false,
     notifyWillClose: () => {},
@@ -358,7 +356,6 @@ export default class Drawer extends Component {
           opacity: 0,
           translate: this.getElementSize()
         }}
-        onRest={this.props.onRest}
       >
         {({ translate, opacity }) => {
           return (

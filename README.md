@@ -48,7 +48,6 @@ render () {
     <Drawer
       open={open}
       onRequestClose={this.toggle}
-      onRest={this.logState}
     >
       <div>Hey Im inside the drawer!</div>
     </Drawer>
@@ -68,7 +67,6 @@ render () {
 | onOpen | Function| invoked on drawer focus | false |
 | notifyWillClose | Function| notify HOC if the drawer will close | false |
 | onClose | Function| invoked on drawer close | false |
-| onRest | Function| invoked on finish of open/close animation | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
 | overlayOpacity | Number | 0.6 unless different value is passed in | false |
 | scrollToClose | Number | pixel drag to trigger onRequestClose | false |
