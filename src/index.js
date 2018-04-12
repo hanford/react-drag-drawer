@@ -332,7 +332,7 @@ export default class Drawer extends Component {
   stopPropagation = event => event.stopPropagation()
 
   render () {
-    const { containerStyle, dontApplyListeners } = this.props
+    const { containerStyle, dontApplyListeners, id } = this.props
 
     // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
@@ -361,6 +361,7 @@ export default class Drawer extends Component {
         {({ translate, opacity }) => {
           return (
             <div
+              id={id}
               style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
               onClick={this.hideDrawer}
               className={Container}
