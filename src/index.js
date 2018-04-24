@@ -3,7 +3,6 @@ import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import document from 'global/document'
 import Observer from 'react-intersection-observer'
-// import Kinetic from 'react-flick-list'
 import styled, { css, keyframes } from 'react-emotion'
 import { createPortal } from 'react-dom'
 
@@ -12,13 +11,13 @@ if (typeof window !== 'undefined') {
 }
 
 export default class Drawer extends Component {
-
   static propTypes = {
     open: PropTypes.bool.isRequired,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
+    inViewportChange: PropTypes.func,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
@@ -30,6 +29,8 @@ export default class Drawer extends Component {
     notifyWillClose: () => {},
     onOpen: () => {},
     onDrag: () => {},
+    inViewportChange: () => {},
+    onRequestClose: () => {},
     direction: 'y',
     parentElement: document.body,
     allowClose: true,
@@ -42,8 +43,7 @@ export default class Drawer extends Component {
     start: 0,
     position: 0,
     touching: false,
-    listenersAttached: false,
-    stopKinetic: false
+    listenersAttached: false
   }
 
   MAX_NEGATIVE_SCROLL = 20
@@ -123,7 +123,6 @@ export default class Drawer extends Component {
   }
 
   componentWillUnmount () {
-    // cleanup listeners
     this.removeListeners()
   }
 
@@ -138,25 +137,25 @@ export default class Drawer extends Component {
     // only attach listeners once as this function gets called every re-render
     if (listenersAttached || dontApplyListeners) return
 
-    // parentElement.addEventListener('touchmove', this.preventDefault)
-    // parentElement.addEventListener('scroll', this.preventDefault)
-    // parentElement.addEventListener('mousewheel', this.preventDefault)
-
     this.drawer.addEventListener('touchend', this.onTouchEnd)
     this.drawer.addEventListener('touchmove', this.onTouchMove)
     this.drawer.addEventListener('touchstart', this.onTouchStart)
 
-    this.setState({ listenersAttached: true })
+    this.setState({ listenersAttached: true }, () => {
+      setTimeout(() => {
+        // trigger reflow so webkit browsers calculate height properly 😔
+        this.drawer.style.display = 'none'
+        void(this.drawer.offsetHeight)
+        this.drawer.style.display = ''
+      }, 300)
+    })
   }
 
   removeListeners = () => {
     const { parentElement } = this.props
 
-    // parentElement.removeEventListener('touchmove', this.preventDefault)
-    // parentElement.removeEventListener('scroll', this.preventDefault)
-    // parentElement.removeEventListener('mousewheel', this.preventDefault)
-
     if (!this.drawer) return
+
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
     this.drawer.removeEventListener('touchmove', this.onTouchMove)
     this.drawer.removeEventListener('touchstart', this.onTouchStart)
@@ -192,14 +191,11 @@ export default class Drawer extends Component {
 
     const newPosition = this.isDirectionVertical() ? position + delta : position - delta
 
-    console.log(newPosition > 0, this.ALLOW_DRAWER_TRANSFORM)
-
     if (newPosition > 0 && this.ALLOW_DRAWER_TRANSFORM) {
       // stop android's pull to refresh behavior
       event.preventDefault()
 
-      this.props.onDrag({ newPosition, topOfViewport: this.ALLOW_DRAWER_TRANSFORM })
-
+      this.props.onDrag({ newPosition })
       // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
       // value in time
       this.MOVING_POSITION = movingPosition
@@ -252,23 +248,11 @@ export default class Drawer extends Component {
     } else {
       this.NEGATIVE_SCROLL = size - element.scrollWidth - this.MAX_NEGATIVE_SCROLL
     }
-
-    // if (this.props.saveNegativeScroll) {
-    //   this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
-    // }
-  }
-
-  setKineticPosition = ({ position, pressed }) => {
-    console.warn('Drawer.setKineticPosition has been deprecated, please remove')
-  }
-
-  setDrawerPosition = position => {
-    console.warn('Drawer.setDrawerPosition has been deprecated, please remove')
   }
 
   hideDrawer = () => {
-    // if we aren't going to allow close, let's animate back to the default position
     if (this.props.allowClose === false) {
+      // if we aren't going to allow close, let's animate back to the default position
       return this.setState(() => {
         return {
           position: 0,
@@ -285,18 +269,16 @@ export default class Drawer extends Component {
       }
     })
 
-    // let's reset our state, so our next drawer has a clean slate
-    // clean up our listeners
+    // cleanup
     this.removeListeners()
 
-    // call the close function
+    // invoke parent close fn
     this.props.onRequestClose()
   }
 
   shouldWeCloseDrawer = () => {
     const { start } = this.state
 
-    // no drag occurred!
     if (this.MOVING_POSITION === 0) return false
 
     return this.isDirectionVertical()
@@ -318,32 +300,33 @@ export default class Drawer extends Component {
     return this.props.direction === 'y'
   }
 
-  setPosition = position => {
-    console.warn('Drawer.setPosition has been deprecated, please remove')
-    // this.setState({ position })
-  }
 
-  inViewChange = inView => {
+  inViewportChange = inView => {
+    this.props.inViewportChange(inView)
+
     this.ALLOW_DRAWER_TRANSFORM = inView
   }
 
   preventDefault = event => event.preventDefault()
   stopPropagation = event => event.stopPropagation()
 
+  setPosition = () => console.warn('Drawer.setPosition has been deprecated, please remove')
+  saveNegativeScroll = () => console.warn('Drawer.saveNegativeScroll has been deprecated, please remove')
+  setKineticPosition = () => console.warn('Drawer.setKineticPosition has been deprecated, please remove')
+  setDrawerPosition = () => console.warn('Drawer.setDrawerPosition has been deprecated, please remove')
+
   render () {
     const { containerStyle, dontApplyListeners, id } = this.props
 
-    // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
 
     if (!this.state.open && !this.props.open) {
       // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
-      return <div />
+      return null
     }
 
     const { position, touching } = this.state
 
-    // slightly different animation spring when dragging to the drawer doesn't feel sluggish
     const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
     const hiddenPosition = this.getElementSize()
 
@@ -363,24 +346,20 @@ export default class Drawer extends Component {
               style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, ...containerStyle}}
               onClick={this.hideDrawer}
             >
-              <HaveWeScrolled onChange={this.inViewChange} />
+              <HaveWeScrolled onChange={this.inViewportChange} />
 
               <div
                 onClick={this.stopPropagation}
-                style={{
-                  ...this.getDrawerTransform(translate),
-                  // transition: `transform ${touching ? 0 : 0.25}s cubic-bezier(0.280, 0.840, 0.420, 1)`
-                }}
+                style={this.getDrawerTransform(translate)}
                 ref={this.attachListeners}
                 className={this.props.modalElementClass || ''}
               >
                 {this.props.children}
               </div>
             </Container>
-           )
-         }}
-       </Motion>
-      ,
+          )
+        }}
+      </Motion>,
       this.props.parentElement
     )
   }
@@ -392,20 +371,17 @@ const Container = styled('div')`
   left: 0;
   right: 0;
   bottom: 0;
+
   display: flex;
   justify-content: center;
-  z-index: 11;
+  flex-shrink: 0;
   align-items: center;
+
+  z-index: 11;
   transition: background-color 0.2s linear;
 
-  overflow: auto;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  will-change: transform;
-
-  @media(max-width: 768px) {
-    height: 100%;
-    width: 100%;
-  }
 `
 
 const HaveWeScrolled = styled(Observer)`
