@@ -1,6 +1,6 @@
 {
   "name": "react-drag-drawer",
-  "version": "2.1.1",
+  "version": "2.1.1-9",
   "description": "Draggable react drawer",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -20,10 +20,12 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "emotion": "~9.0.2",
+    "emotion": "~9.1.2",
     "global": "~4.3.2",
+    "intersection-observer": "~0.5.0",
     "prop-types": "~15.6.1",
-    "react-flick-list": "~0.5.0",
+    "react-emotion": "~9.1.2",
+    "react-intersection-observer": "~3.0.3",
     "react-motion": "~0.5.2"
   },
   "peerDependencies": {

@@ -25,7 +25,7 @@ class Demo extends Component {
     setTimeout(() => {
       const asyncChildren = bigArray.map((_, index) => <div key={index}>{index}</div>)
       this.setState({asyncChildren})
-    }, 400)
+    }, 100)
   }
 
   render() {
@@ -97,7 +97,7 @@ const Content = css`
 `
 
 const Card = css`
-  height: 100%;
+  ${'' /* height: 100%; */}
 
   @media(min-width: 768px) {
     height: 300px;
@@ -160,6 +160,7 @@ const ButtonContainer = css`
   margin: 200px auto 0;
   width: 100%;
   text-align: center;
+  height: 2000px;
 `
 
 render(<Demo/>, document.querySelector('#demo'))
