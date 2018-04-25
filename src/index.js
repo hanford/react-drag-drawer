@@ -380,7 +380,7 @@ const Container = styled('div')`
   z-index: 11;
   transition: background-color 0.2s linear;
 
-  overflow-y: scroll;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `
 
