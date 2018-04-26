@@ -25,7 +25,7 @@ class Demo extends Component {
     setTimeout(() => {
       const asyncChildren = bigArray.map((_, index) => <div key={index}>{index}</div>)
       this.setState({asyncChildren})
-    }, 400)
+    }, 200)
   }
 
   render() {

@@ -1,20 +1,23 @@
 import React, { Component } from 'react'
 import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
-import window from 'global/window'
 import document from 'global/document'
-import Kinetic from 'react-flick-list'
-import { css } from 'emotion'
+import Observer from 'react-intersection-observer'
+import styled, { css, keyframes } from 'react-emotion'
 import { createPortal } from 'react-dom'
 
-export default class Drawer extends Component {
+if (typeof window !== 'undefined') {
+  require('intersection-observer')
+}
 
+export default class Drawer extends Component {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
     onRequestClose: PropTypes.func.isRequired,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
+    inViewportChange: PropTypes.func,
     allowClose: PropTypes.bool,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     containerStyle: PropTypes.object,
@@ -25,11 +28,13 @@ export default class Drawer extends Component {
   static defaultProps = {
     notifyWillClose: () => {},
     onOpen: () => {},
+    onDrag: () => {},
+    inViewportChange: () => {},
+    onRequestClose: () => {},
     direction: 'y',
     parentElement: document.body,
     allowClose: true,
-    dontApplyListeners: false,
-    kinetic: false,
+    dontApplyListeners: false
   }
 
   state = {
@@ -38,12 +43,12 @@ export default class Drawer extends Component {
     start: 0,
     position: 0,
     touching: false,
-    listenersAttached: false,
-    stopKinetic: false
+    listenersAttached: false
   }
 
   MAX_NEGATIVE_SCROLL = 20
   SCROLL_TO_CLOSE = 75
+  ALLOW_DRAWER_TRANSFORM = true
 
   componentDidMount () {
     if (this.props.escapeClose) {
@@ -74,14 +79,22 @@ export default class Drawer extends Component {
       console.warn('spring has been deprecated, please remove it from react-drag-drawer')
     }
 
+    if (this.props.kinetic) {
+      console.warn('kinetic has been deprecated, please remove it from react-drag-drawer')
+    }
+
+    if (this.props.animationSpring) {
+      console.warn('animationSpring has been deprecated, please remove it from react-drag-drawer')
+    }
+
     if (this.drawer) {
       this.getNegativeScroll(this.drawer)
     }
   }
 
-  componentWillUpdate (nextProps, nextState) {
+  componentDidUpdate (prevProps, nextState) {
     // in the process of closing the drawer
-    if (this.props.open && !nextProps.open) {
+    if (!this.props.open && prevProps.open) {
       this.removeListeners()
 
       setTimeout(() => {
@@ -98,7 +111,7 @@ export default class Drawer extends Component {
     }
 
     // in the process of opening the drawer
-    if (!this.props.open && nextProps.open) {
+    if (this.props.open && !prevProps.open) {
       this.props.onOpen()
 
       this.setState(() => {
@@ -110,16 +123,7 @@ export default class Drawer extends Component {
   }
 
   componentWillUnmount () {
-    // incase user navigated directly to checkout
     this.removeListeners()
-
-    this.setState(() => {
-      return {
-        position: 0,
-        thumb: 0,
-        touching: false
-      }
-    })
   }
 
   attachListeners = (drawer) => {
@@ -133,25 +137,25 @@ export default class Drawer extends Component {
     // only attach listeners once as this function gets called every re-render
     if (listenersAttached || dontApplyListeners) return
 
-    parentElement.addEventListener('touchmove', this.preventDefault)
-    parentElement.addEventListener('scroll', this.preventDefault)
-    parentElement.addEventListener('mousewheel', this.preventDefault)
-
     this.drawer.addEventListener('touchend', this.onTouchEnd)
     this.drawer.addEventListener('touchmove', this.onTouchMove)
     this.drawer.addEventListener('touchstart', this.onTouchStart)
 
-    this.setState({ listenersAttached: true })
+    this.setState({ listenersAttached: true }, () => {
+      setTimeout(() => {
+        // trigger reflow so webkit browsers calculate height properly 😔
+        this.drawer.style.display = 'none'
+        void(this.drawer.offsetHeight)
+        this.drawer.style.display = ''
+      }, 300)
+    })
   }
 
   removeListeners = () => {
     const { parentElement } = this.props
 
-    parentElement.removeEventListener('touchmove', this.preventDefault)
-    parentElement.removeEventListener('scroll', this.preventDefault)
-    parentElement.removeEventListener('mousewheel', this.preventDefault)
-
     if (!this.drawer) return
+
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
     this.drawer.removeEventListener('touchmove', this.onTouchMove)
     this.drawer.removeEventListener('touchstart', this.onTouchStart)
@@ -180,39 +184,38 @@ export default class Drawer extends Component {
   onTouchMove = event => {
     const { thumb, start, position } = this.state
 
-    // stop android's pull to refresh behavior
-    event.preventDefault()
-
     const { pageY, pageX } = event.touches[0]
 
     const movingPosition = this.isDirectionVertical() ? pageY : pageX
     const delta = movingPosition - thumb
 
     const newPosition = this.isDirectionVertical() ? position + delta : position - delta
-    const atBottom = newPosition < this.NEGATIVE_SCROLL
 
-    if (this.props.onDrag) {
-      this.props.onDrag(newPosition)
-    }
+    if (newPosition > 0 && this.ALLOW_DRAWER_TRANSFORM) {
+      // stop android's pull to refresh behavior
+      event.preventDefault()
 
-    // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
-    // value in time
-    this.MOVING_POSITION = movingPosition
-    this.NEW_POSITION = newPosition
+      this.props.onDrag({ newPosition })
+      // we set this, so we can access it in shouldWeCloseDrawer. Since setState is async, we're not guranteed we'll have the
+      // value in time
+      this.MOVING_POSITION = movingPosition
+      this.NEW_POSITION = newPosition
 
-    if (newPosition >= 0 && this.shouldWeCloseDrawer()) {
-      this.props.notifyWillClose(true)
-    } else {
-      this.props.notifyWillClose(false)
-    }
+      if (newPosition >= 0 && this.shouldWeCloseDrawer()) {
+        this.props.notifyWillClose(true)
+      } else {
+        this.props.notifyWillClose(false)
+      }
 
-    if (!atBottom) {
-      this.setState(() => {
-        return {
-          thumb: movingPosition,
-          position: newPosition
-        }
-      })
+      // not at the bottom
+      if (this.NEGATIVE_SCROLL < newPosition) {
+        this.setState(() => {
+          return {
+            thumb: movingPosition,
+            position: newPosition
+          }
+        })
+      }
     }
   }
 
@@ -228,6 +231,12 @@ export default class Drawer extends Component {
 
     if (this.shouldWeCloseDrawer()) {
       this.hideDrawer()
+    } else {
+      this.setState(() => {
+        return {
+          position: 0
+        }
+      })
     }
   }
 
@@ -239,42 +248,11 @@ export default class Drawer extends Component {
     } else {
       this.NEGATIVE_SCROLL = size - element.scrollWidth - this.MAX_NEGATIVE_SCROLL
     }
-
-    if (this.props.saveNegativeScroll) {
-      this.props.saveNegativeScroll(this.NEGATIVE_SCROLL, this.isDirectionVertical() ? element.scrollHeight : element.scrollWidth)
-    }
-  }
-
-  setKineticPosition = ({ position, pressed }) => {
-    // flip values
-    const pos = position > 0 ? -Math.abs(position) : Math.abs(position)
-
-    const toPos = this.SCROLL_TO_CLOSE < pos && !pressed ? this.SCROLL_TO_CLOSE : pos
-
-    if (this.props.onDrag) {
-      this.props.onDrag(toPos)
-    }
-
-    this.setPosition(toPos)
-  }
-
-  setDrawerPosition = position => {
-    const { kinetic } = this.props
-
-    if (kinetic) {
-      this.setState({stopKinetic: true}, () => {
-        setTimeout(() => {
-          this.setState({stopKinetic: false})
-        }, 200)
-      })
-    }
-
-    this.setState({ position, thumb: 0, start: 0 })
   }
 
   hideDrawer = () => {
-    // if we aren't going to allow close, let's animate back to the default position
     if (this.props.allowClose === false) {
+      // if we aren't going to allow close, let's animate back to the default position
       return this.setState(() => {
         return {
           position: 0,
@@ -291,29 +269,27 @@ export default class Drawer extends Component {
       }
     })
 
-    // let's reset our state, so our next drawer has a clean slate
-    // clean up our listeners
+    // cleanup
     this.removeListeners()
 
-    // call the close function
+    // invoke parent close fn
     this.props.onRequestClose()
   }
 
   shouldWeCloseDrawer = () => {
     const { start } = this.state
 
-    // no drag occurred!
-    if (this.MOVING_POSITION === 0) return
+    if (this.MOVING_POSITION === 0) return false
 
     return this.isDirectionVertical()
       ? this.NEW_POSITION >= 0 && this.MOVING_POSITION - start > this.SCROLL_TO_CLOSE
       : this.NEW_POSITION >= 0 && start - this.MOVING_POSITION > this.SCROLL_TO_CLOSE
   }
 
-  getDrawerStyle = value => {
+  getDrawerTransform = value => {
     const { direction } = this.props
 
-    return this.isDirectionVertical() ? {transform: `translateY(${value}px)`} : {transform: `translateX(-${value}px)`}
+    return this.isDirectionVertical() ? {transform: `translate3d(0, ${value}px, 0)`} : {transform: `translate3d(-${value}px, 0, 0)`}
   }
 
   getElementSize = () => {
@@ -324,70 +300,63 @@ export default class Drawer extends Component {
     return this.props.direction === 'y'
   }
 
-  setPosition = position => {
-    this.setState({ position })
+
+  inViewportChange = inView => {
+    this.props.inViewportChange(inView)
+
+    this.ALLOW_DRAWER_TRANSFORM = inView
   }
 
   preventDefault = event => event.preventDefault()
   stopPropagation = event => event.stopPropagation()
 
+  setPosition = () => console.warn('Drawer.setPosition has been deprecated, please remove')
+  saveNegativeScroll = () => console.warn('Drawer.saveNegativeScroll has been deprecated, please remove')
+  setKineticPosition = () => console.warn('Drawer.setKineticPosition has been deprecated, please remove')
+  setDrawerPosition = () => console.warn('Drawer.setDrawerPosition has been deprecated, please remove')
+
   render () {
     const { containerStyle, dontApplyListeners, id } = this.props
 
-    // Otherwise we only care if both state and props open are true
     const open = this.state.open && this.props.open
 
     if (!this.state.open && !this.props.open) {
       // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
-      return <div />
+      return null
     }
 
     const { position, touching } = this.state
 
-    // slightly different animation spring when dragging to the drawer doesn't feel sluggish
     const animationSpring = touching ? {damping: 20, stiffness: 300} : presets.stiff
+    const hiddenPosition = this.getElementSize()
 
     return createPortal(
       <Motion
         style={{
-          translate: spring(open ? position : this.getElementSize(), animationSpring),
-          opacity: spring(open ? 0.6 : 0)
+          translate: spring(open ? position : hiddenPosition, animationSpring),
         }}
         defaultStyle={{
-          opacity: 0,
-          translate: this.getElementSize()
+          translate: hiddenPosition
         }}
       >
-        {({ translate, opacity }) => {
+        {({ translate }) => {
           return (
-            <div
+            <Container
               id={id}
-              style={{backgroundColor: `rgba(55, 56, 56, ${opacity})`, ...containerStyle}}
+              style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, ...containerStyle}}
               onClick={this.hideDrawer}
-              className={Container}
             >
+              <HaveWeScrolled onChange={this.inViewportChange} />
+
               <div
                 onClick={this.stopPropagation}
-                style={this.getDrawerStyle(translate)}
+                style={this.getDrawerTransform(translate)}
                 ref={this.attachListeners}
                 className={this.props.modalElementClass || ''}
               >
-
-                {
-                  this.drawer && this.props.kinetic
-                  && (
-                    <Kinetic
-                      stop={this.state.stopKinetic}
-                      max={Math.abs(this.NEGATIVE_SCROLL)}
-                      element={this.drawer}
-                      broadcast={this.setKineticPosition}
-                    />
-                  )
-                }
-
                 {this.props.children}
               </div>
-            </div>
+            </Container>
           )
         }}
       </Motion>,
@@ -396,19 +365,28 @@ export default class Drawer extends Component {
   }
 }
 
-const Container = css`
+const Container = styled('div')`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+
   display: flex;
   justify-content: center;
-  z-index: 11;
+  flex-shrink: 0;
   align-items: center;
 
-  @media(max-width: 768px) {
-    height: 100%;
-    width: 100%;
-  }
+  z-index: 11;
+  transition: background-color 0.2s linear;
+
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+`
+
+const HaveWeScrolled = styled(Observer)`
+  position: absolute;
+  top: 0;
+  height: 1px;
+  width: 100%;
 `
