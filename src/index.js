@@ -6,7 +6,7 @@ import Observer from 'react-intersection-observer'
 import { css } from 'emotion'
 import { createPortal } from 'react-dom'
 
-if (typeof window !== 'undefined') {
+if (isClientSide()) {
   require('intersection-observer')
 }
 
@@ -19,10 +19,10 @@ export default class Drawer extends Component {
     onOpen: PropTypes.func,
     inViewportChange: PropTypes.func,
     allowClose: PropTypes.bool,
-    modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    containerStyle: PropTypes.object,
     notifyWillClose: PropTypes.func,
-    direction: PropTypes.string
+    direction: PropTypes.string,
+    modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    containerElementClass: PropTypes.string
   }
 
   static defaultProps = {
@@ -34,7 +34,9 @@ export default class Drawer extends Component {
     direction: 'y',
     parentElement: document.body,
     allowClose: true,
-    dontApplyListeners: false
+    dontApplyListeners: false,
+    containerElementClass: '',
+    modalElementClass: ''
   }
 
   state = {
@@ -87,6 +89,10 @@ export default class Drawer extends Component {
       console.warn('animationSpring has been deprecated, please remove it from react-drag-drawer')
     }
 
+    if (this.props.containerStyle) {
+      console.warn('containerStyle has been deprecated, please remove it from react-drag-drawer')
+    }
+
     if (this.drawer) {
       this.getNegativeScroll(this.drawer)
     }
@@ -127,15 +133,13 @@ export default class Drawer extends Component {
   }
 
   attachListeners = (drawer) => {
-    const { parentElement, dontApplyListeners }  = this.props
+    const { dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
 
-    if (!drawer || typeof window === 'undefined') return
+    // only attach listeners once as this function gets called every re-render
+    if (!drawer || listenersAttached || dontApplyListeners) return
 
     this.drawer = drawer
-
-    // only attach listeners once as this function gets called every re-render
-    if (listenersAttached || dontApplyListeners) return
 
     this.drawer.addEventListener('touchend', this.onTouchEnd)
     this.drawer.addEventListener('touchmove', this.onTouchMove)
@@ -152,8 +156,6 @@ export default class Drawer extends Component {
   }
 
   removeListeners = () => {
-    const { parentElement } = this.props
-
     if (!this.drawer) return
 
     this.drawer.removeEventListener('touchend', this.onTouchEnd)
@@ -220,7 +222,6 @@ export default class Drawer extends Component {
   }
 
   onTouchEnd = event => {
-    const { disableDrag } = this.props
     const { start } = this.state
 
     this.setState(() => {
@@ -293,7 +294,7 @@ export default class Drawer extends Component {
   }
 
   getElementSize = () => {
-    if (typeof window !== 'undefined') {
+    if (isClientSide()) {
       return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
     }
   }
@@ -318,12 +319,14 @@ export default class Drawer extends Component {
   setDrawerPosition = () => console.warn('Drawer.setDrawerPosition has been deprecated, please remove')
 
   render () {
-    const { containerStyle, dontApplyListeners, id } = this.props
+    const { containerElementClass, dontApplyListeners, id } = this.props
 
     const open = this.state.open && this.props.open
 
-    if (!this.state.open && !this.props.open) {
-      // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
+    // If drawer isn't open or in the process of opening/closing, then remove it from the DOM
+    // also, if we're not client side we need to return early because createPortal is only
+    // a clientside method
+    if ((!this.state.open && !this.props.open) || !isClientSide()) {
       return null
     }
 
@@ -345,9 +348,9 @@ export default class Drawer extends Component {
           return (
             <div
               id={id}
-              style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, ...containerStyle}}
+              style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`}}
               onClick={this.hideDrawer}
-              className={Container}
+              className={`${Container} ${containerElementClass}`}
             >
               <Observer className={HaveWeScrolled} onChange={this.inViewportChange} />
 
@@ -393,3 +396,7 @@ const HaveWeScrolled = css`
   height: 1px;
   width: 100%;
 `
+
+function isClientSide () {
+  return typeof window !== 'undefined'
+}
