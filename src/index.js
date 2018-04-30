@@ -52,52 +52,6 @@ export default class Drawer extends Component {
   SCROLL_TO_CLOSE = 75
   ALLOW_DRAWER_TRANSFORM = true
 
-  componentDidMount () {
-    if (this.props.escapeClose) {
-      console.warn('escapeClose has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.overlayOpacity) {
-      console.warn('overlayOpacity has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.onRest) {
-      console.warn('onRest has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.maxNegativeScroll) {
-      console.warn('maxNegativeScroll has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.disableDrag) {
-      console.warn('disableDrag has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.scrollToClose) {
-      console.warn('scrollToClose has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.spring) {
-      console.warn('spring has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.kinetic) {
-      console.warn('kinetic has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.animationSpring) {
-      console.warn('animationSpring has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.props.containerStyle) {
-      console.warn('containerStyle has been deprecated, please remove it from react-drag-drawer')
-    }
-
-    if (this.drawer) {
-      this.getNegativeScroll(this.drawer)
-    }
-  }
-
   componentDidUpdate (prevProps, nextState) {
     // in the process of closing the drawer
     if (!this.props.open && prevProps.open) {
@@ -312,11 +266,6 @@ export default class Drawer extends Component {
 
   preventDefault = event => event.preventDefault()
   stopPropagation = event => event.stopPropagation()
-
-  setPosition = () => console.warn('Drawer.setPosition has been deprecated, please remove')
-  saveNegativeScroll = () => console.warn('Drawer.saveNegativeScroll has been deprecated, please remove')
-  setKineticPosition = () => console.warn('Drawer.setKineticPosition has been deprecated, please remove')
-  setDrawerPosition = () => console.warn('Drawer.setDrawerPosition has been deprecated, please remove')
 
   render () {
     const { containerElementClass, dontApplyListeners, id } = this.props
