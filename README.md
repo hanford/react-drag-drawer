@@ -67,8 +67,8 @@ render () {
 | onOpen | Function| invoked on drawer focus | false |
 | notifyWillClose | Function| notify HOC if the drawer will close | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
-| modalElementClass | Object | className to be applied to top <Drawer> element | false |
-| containerStyle | Object | styles to be applied to the drawer container | false |
+| modalElementClass | String | className to be applied to top <Drawer> element | false |
+| containerElementClass | String | className to be applied to the drawer container element | false |
 | parentElement | ref | block scrolls on element if you're not using body scrolling | false |
 | direction | String | direction to translate drawer | false |
 | dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
