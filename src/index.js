@@ -22,7 +22,9 @@ export default class Drawer extends Component {
     notifyWillClose: PropTypes.func,
     direction: PropTypes.string,
     modalElementClass: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    containerElementClass: PropTypes.string
+    containerElementClass: PropTypes.string,
+    getContainerRef: PropTypes.func,
+    getModalRef: PropTypes.func
   }
 
   static defaultProps = {
@@ -31,6 +33,8 @@ export default class Drawer extends Component {
     onDrag: () => {},
     inViewportChange: () => {},
     onRequestClose: () => {},
+    getContainerRef: () => {},
+    getModalRef: () => {},
     direction: 'y',
     parentElement: document.body,
     allowClose: true,
@@ -87,13 +91,14 @@ export default class Drawer extends Component {
   }
 
   attachListeners = (drawer) => {
-    const { dontApplyListeners }  = this.props
+    const { dontApplyListeners, getModalRef }  = this.props
     const { listenersAttached } = this.state
 
     // only attach listeners once as this function gets called every re-render
     if (!drawer || listenersAttached || dontApplyListeners) return
 
     this.drawer = drawer
+    getModalRef(drawer)
 
     this.drawer.addEventListener('touchend', this.onTouchEnd)
     this.drawer.addEventListener('touchmove', this.onTouchMove)
@@ -226,8 +231,6 @@ export default class Drawer extends Component {
 
     // cleanup
     this.removeListeners()
-
-    // invoke parent close fn
     this.props.onRequestClose()
   }
 
@@ -257,7 +260,6 @@ export default class Drawer extends Component {
     return this.props.direction === 'y'
   }
 
-
   inViewportChange = inView => {
     this.props.inViewportChange(inView)
 
@@ -268,7 +270,7 @@ export default class Drawer extends Component {
   stopPropagation = event => event.stopPropagation()
 
   render () {
-    const { containerElementClass, dontApplyListeners, id } = this.props
+    const { containerElementClass, dontApplyListeners, id, getContainerRef, getModalRef } = this.props
 
     const open = this.state.open && this.props.open
 
@@ -300,6 +302,7 @@ export default class Drawer extends Component {
               style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`}}
               onClick={this.hideDrawer}
               className={`${Container} ${containerElementClass}`}
+              ref={getContainerRef}
             >
               <Observer className={HaveWeScrolled} onChange={this.inViewportChange} />
 

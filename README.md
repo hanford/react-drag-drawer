@@ -37,10 +37,6 @@ toggle = () => {
   this.setState({ toggle: !toggle })
 }
 
-logState = () => {
-  console.log(`Drawer now ${this.state.open ? 'open' : 'closed'}`)
-}
-
 render () {
   const { open } = this.state
 
@@ -65,7 +61,7 @@ render () {
 | onRequestClose | Function| null | true |
 | onDrag | Function| invoked on drag | false |
 | onOpen | Function| invoked on drawer focus | false |
-| notifyWillClose | Function| notify HOC if the drawer will close | false |
+| notifyWillClose | Function| notify consumer if the drawer will close at touch release | false |
 | allowClose | Boolean | block closing if allowClose={false}, default is true | false |
 | modalElementClass | String | className to be applied to top <Drawer> element | false |
 | containerElementClass | String | className to be applied to the drawer container element | false |
@@ -73,6 +69,8 @@ render () {
 | direction | String | direction to translate drawer | false |
 | dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
 | inViewportChange | Function | detect when drawer is at top of viewport | false |
+| getModalRef | Function | get modal (draggable element) ref | false |
+| getContainerRef | Function | get container (overlay) ref | false |
 
 Example modal style
 ```css
