@@ -3,7 +3,7 @@ import { Motion, spring, presets } from 'react-motion'
 import PropTypes from 'prop-types'
 import document from 'global/document'
 import Observer from 'react-intersection-observer'
-import styled, { css, keyframes } from 'react-emotion'
+import { css } from 'emotion'
 import { createPortal } from 'react-dom'
 
 if (typeof window !== 'undefined') {
@@ -130,7 +130,7 @@ export default class Drawer extends Component {
     const { parentElement, dontApplyListeners }  = this.props
     const { listenersAttached } = this.state
 
-    if (!drawer) return
+    if (!drawer || typeof window === 'undefined') return
 
     this.drawer = drawer
 
@@ -293,7 +293,9 @@ export default class Drawer extends Component {
   }
 
   getElementSize = () => {
-    return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
+    if (typeof window !== 'undefined') {
+      return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
+    }
   }
 
   isDirectionVertical = () => {
@@ -341,12 +343,13 @@ export default class Drawer extends Component {
       >
         {({ translate }) => {
           return (
-            <Container
+            <div
               id={id}
               style={{backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, ...containerStyle}}
               onClick={this.hideDrawer}
+              className={Container}
             >
-              <HaveWeScrolled onChange={this.inViewportChange} />
+              <Observer className={HaveWeScrolled} onChange={this.inViewportChange} />
 
               <div
                 onClick={this.stopPropagation}
@@ -356,7 +359,7 @@ export default class Drawer extends Component {
               >
                 {this.props.children}
               </div>
-            </Container>
+            </div>
           )
         }}
       </Motion>,
@@ -365,7 +368,7 @@ export default class Drawer extends Component {
   }
 }
 
-const Container = styled('div')`
+const Container = css`
   position: fixed;
   top: 0;
   left: 0;
@@ -384,7 +387,7 @@ const Container = styled('div')`
   -webkit-overflow-scrolling: touch;
 `
 
-const HaveWeScrolled = styled(Observer)`
+const HaveWeScrolled = css`
   position: absolute;
   top: 0;
   height: 1px;
