@@ -42,7 +42,7 @@ class Demo extends PureComponent {
         <h1>React Drag Drawer</h1>
         <Info>react-drag-drawer is a lightweight, performant, drawer/modal component that can be dragged close. The animations are done with react-motion so they feel very natural</Info>
         <button onClick={this.toggle('regular', true)} className={Toggle}>Open example</button>
-        <div className={Break} />>
+        <div className={Break} />
         <Info>react-drag-drawer uses native HTML5 scrolling to remain performant and to properly respond to async data / components</Info>
         <button onClick={this.toggle('asyncHeight', true)} className={Toggle}>Async height</button>
         <div className={Break} />
