@@ -33,7 +33,8 @@
   "devDependencies": {
     "nwb": "0.21.x",
     "react": "~16.2.0",
-    "react-dom": "~16.2.0"
+    "react-dom": "~16.2.0",
+    "react-github-badge": "~0.4.0"
   },
   "license": "MIT",
   "repository": {
