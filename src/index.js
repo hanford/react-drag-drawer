@@ -13,8 +13,8 @@ if (isClientSide()) {
 export default class Drawer extends Component {
   static propTypes = {
     open: PropTypes.bool.isRequired,
-    children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-    onRequestClose: PropTypes.func.isRequired,
+    children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.element]),
+    onRequestClose: PropTypes.func,
     onDrag: PropTypes.func,
     onOpen: PropTypes.func,
     inViewportChange: PropTypes.func,
@@ -107,6 +107,7 @@ export default class Drawer extends Component {
     this.setState({ listenersAttached: true }, () => {
       setTimeout(() => {
         // trigger reflow so webkit browsers calculate height properly 😔
+        // https://bugs.webkit.org/show_bug.cgi?id=184905
         this.drawer.style.display = 'none'
         void(this.drawer.offsetHeight)
         this.drawer.style.display = ''
@@ -144,7 +145,6 @@ export default class Drawer extends Component {
 
   onTouchMove = event => {
     const { thumb, start, position } = this.state
-
     const { pageY, pageX } = event.touches[0]
 
     const movingPosition = this.isDirectionVertical() ? pageY : pageX
@@ -211,7 +211,8 @@ export default class Drawer extends Component {
   }
 
   hideDrawer = () => {
-    if (this.props.allowClose === false) {
+    const { allowClose, onRequestClose } = this.props
+    if (allowClose === false) {
       // if we aren't going to allow close, let's animate back to the default position
       return this.setState(() => {
         return {
@@ -231,7 +232,7 @@ export default class Drawer extends Component {
 
     // cleanup
     this.removeListeners()
-    this.props.onRequestClose()
+    onRequestClose()
   }
 
   shouldWeCloseDrawer = () => {

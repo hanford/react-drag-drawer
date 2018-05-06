@@ -1,17 +1,16 @@
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import GithubBadge from 'react-github-badge'
 import { render } from 'react-dom'
 import { css } from 'emotion'
 
 import Drawer from '../../src'
 
-const bigArray = new Array(500).fill(true)
-
 class Demo extends PureComponent {
   state = {
     regular: false,
     sidebar: false,
-    asyncHeight: false
+    asyncHeight: false,
+    crazyStyle: SVGFEGaussianBlurElement
   }
 
   toggle = (type, value) => event => {
@@ -22,14 +21,7 @@ class Demo extends PureComponent {
     })
   }
 
-  getAsyncChildren = () => {
-    setTimeout(() => {
-      const asyncChildren = bigArray.map((_, index) => <div key={index}>{index}</div>)
-      this.setState({asyncChildren})
-    }, 200)
-  }
-
-  render() {
+  render () {
     const { regular, sidebar, asyncHeight, crazyStyle } = this.state
 
     return (
@@ -40,19 +32,118 @@ class Demo extends PureComponent {
         />
 
         <h1>React Drag Drawer</h1>
+
         <Info>react-drag-drawer is a lightweight, performant, drawer/modal component that can be dragged close. The animations are done with react-motion so they feel very natural</Info>
         <button onClick={this.toggle('regular', true)} className={Toggle}>Open example</button>
+        <pre className={Code}>
+        {`import Drawer from 'react-drag-drawer'
+
+..
+
+toggle = () => {
+  let { toggle } = this.state
+
+  this.setState({ toggle: !toggle })
+}
+
+render () {
+  const { open } = this.state
+
+  return (
+    <Drawer
+      open={open}
+      onRequestClose={this.toggle}
+    >
+      <div>Hey Im inside a drawer!</div>
+    </Drawer>
+  )
+}
+        `}
+        </pre>
         <div className={Break} />
+
         <Info>react-drag-drawer uses native HTML5 scrolling to remain performant and to properly respond to async data / components</Info>
         <button onClick={this.toggle('asyncHeight', true)} className={Toggle}>Async height</button>
         <div className={Break} />
+
         <Info>You can also use react-drag-drawer to build sidebars by simply changing the `direction` prop</Info>
         <button onClick={this.toggle('sidebar', true)} className={Toggle}>Sidebar</button>
+        <pre className={Code}>
+        {`import Drawer from 'react-drag-drawer'
+
+..
+
+<Drawer
+  open={true}
+  onRequestClose={this.toggle}
+  direction='x'
+>
+  <div>Hey Im inside a drawer!</div>
+</Drawer>
+        `}
+        </pre>
         <div className={Break} />
+
         <Info>react-drag-drawer assumes nothing about your styles and is left entirely up to you how you want to style it</Info>
         <button onClick={this.toggle('crazyStyle', true)} className={Toggle}>Different style</button>
+        <pre className={Code}>
+        {`import Drawer from 'react-drag-drawer'
+
+..
+
+<Drawer
+  open={true}
+  onRequestClose={this.toggle}
+  modalElementClass={myCustomDrawerClassName}
+>
+  <div>Hey Im inside a drawer!</div>
+</Drawer>
+        `}
+        </pre>
         <div className={Break} />
-        <Info>react-drag-drawer has a <a target='_blank' href='https://github.com/hanford/react-drag-drawer#api'>small but extensive API</a> that allows for some very cool customizations</Info>
+
+        <Info>You can conditionally apply event listeners by using the dontApplyListeners prop</Info>
+        <pre className={Code}>
+        {`import Drawer from 'react-drag-drawer'
+
+..
+
+<Drawer
+  open={true}
+  onRequestClose={this.toggle}
+  dontApplyListeners={true}
+>
+  <div>Hey Im inside a drawer!</div>
+</Drawer>
+        `}
+        </pre>
+        <div className={Break} />
+
+        <Info>react-drag-drawer has a <a target='_blank' href='https://github.com/hanford/react-drag-drawer#api'>small but extensive API</a> that allows for some very cool customizations. The code for this website can be found <a href='https://github.com/hanford/react-drag-drawer/blob/master/demo/src/index.js' targert='_blank'>on github.</a></Info>
+
+        <pre className={Code}>
+        {`import Drawer from 'react-drag-drawer'
+
+..
+
+<Drawer
+  onRequestClose={() => {}}
+  onDrag={() => {}}
+  onOpen={() => {}}
+  notifyWillClose={willIClose => console.log({ willIClose })}
+  allowClose={true}
+  modalElementClass='card'
+  containerElementClass='my-shade'
+  parentElement={document.body} // element to be appended to
+  direction='y'
+  inViewportChange={atTopOfViewport => console.log({ atTopOfViewport })}
+  getModalRef={ref => console.log({ ref })}
+  getContainerRef={ref => console.log({ ref })}
+>
+  <div>Hey Im inside a drawer!</div>
+</Drawer>
+        `}
+        </pre>
 
         <Drawer
           open={regular}
@@ -74,6 +165,17 @@ class Demo extends PureComponent {
           <div className={Card}>
             I'm a sidebar drawer
             <button className={Toggle} onClick={this.toggle('sidebar', false)}>Close drawer</button>
+          </div>
+        </Drawer>
+
+        <Drawer
+          open={crazyStyle}
+          onRequestClose={this.toggle('crazyStyle', false)}
+          modalElementClass={CrazyStyle}
+        >
+          <div className={Card}>
+            I'm full screen height because of some style changes
+            <button className={Toggle} onClick={this.toggle('crazyStyle', false)}>Close drawer</button>
           </div>
         </Drawer>
 
@@ -100,7 +202,7 @@ class AsyncHeightDrawer extends PureComponent {
         const newArray = new Array(500).fill(true)
 
         this.setState({ asyncData: newArray })
-      }, 1500)
+      }, 200)
     }
 
     if (nextProps.open === false && this.props.open) {
@@ -126,6 +228,10 @@ const Reset = css`
   body {
     margin: 0;
     padding: 0;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 `
 
@@ -215,20 +321,33 @@ const HugeList = css`
 `
 
 const Container = css`
-  margin: 200px auto 0;
-  width: 100%;
-
+  margin: 0 auto;
+  max-width: 100%;
   font-family: arial;
   max-width: 600px;
+  padding: 48px 16px;
+
+  @media(max-width: 767px) {
+    padding: 80px 16px;
+  }
+`
+
+const InfoComponent = css`
+
 `
 
 const Break = css`
   width: 100%;
   margin-bottom: 20px;
+  margin-top: 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 `
 
-const InfoComponent = css`
-
+const Code = css`
+  background-color: rgba(0,0,0,0.05);
+  padding: 8px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 `
 
 render(<Demo/>, document.querySelector('#demo'))
