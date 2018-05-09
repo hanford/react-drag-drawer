@@ -6,6 +6,8 @@ import Observer from 'react-intersection-observer'
 import { css } from 'emotion'
 import { createPortal } from 'react-dom'
 
+import { isDirectionVertical, isClientSide } from './helpers'
+
 if (isClientSide()) {
   require('intersection-observer')
 }
@@ -100,9 +102,9 @@ export default class Drawer extends Component {
     this.drawer = drawer
     getModalRef(drawer)
 
-    this.drawer.addEventListener('touchend', this.onTouchEnd)
-    this.drawer.addEventListener('touchmove', this.onTouchMove)
-    this.drawer.addEventListener('touchstart', this.onTouchStart)
+    this.drawer.addEventListener('touchend', this.release)
+    this.drawer.addEventListener('touchmove', this.drag)
+    this.drawer.addEventListener('touchstart', this.tap)
 
     this.setState({ listenersAttached: true }, () => {
       setTimeout(() => {
@@ -118,17 +120,17 @@ export default class Drawer extends Component {
   removeListeners = () => {
     if (!this.drawer) return
 
-    this.drawer.removeEventListener('touchend', this.onTouchEnd)
-    this.drawer.removeEventListener('touchmove', this.onTouchMove)
-    this.drawer.removeEventListener('touchstart', this.onTouchStart)
+    this.drawer.removeEventListener('touchend', this.release)
+    this.drawer.removeEventListener('touchmove', this.drag)
+    this.drawer.removeEventListener('touchstart', this.tap)
 
     this.setState({ listenersAttached: false })
   }
 
-  onTouchStart = event => {
+  tap = event => {
     const { pageY, pageX } = event.touches[0]
 
-    const start = this.isDirectionVertical() ? pageY : pageX
+    const start = isDirectionVertical(this.props.direction) ? pageY : pageX
 
     // reset NEW_POSITION and MOVING_POSITION
     this.NEW_POSITION = 0
@@ -143,14 +145,14 @@ export default class Drawer extends Component {
     })
   }
 
-  onTouchMove = event => {
+  drag = event => {
     const { thumb, start, position } = this.state
     const { pageY, pageX } = event.touches[0]
 
-    const movingPosition = this.isDirectionVertical() ? pageY : pageX
+    const movingPosition = isDirectionVertical(this.props.direction) ? pageY : pageX
     const delta = movingPosition - thumb
 
-    const newPosition = this.isDirectionVertical() ? position + delta : position - delta
+    const newPosition = isDirectionVertical(this.props.direction) ? position + delta : position - delta
 
     if (newPosition > 0 && this.ALLOW_DRAWER_TRANSFORM) {
       // stop android's pull to refresh behavior
@@ -180,7 +182,7 @@ export default class Drawer extends Component {
     }
   }
 
-  onTouchEnd = event => {
+  release = event => {
     const { start } = this.state
 
     this.setState(() => {
@@ -203,7 +205,7 @@ export default class Drawer extends Component {
   getNegativeScroll = element => {
     const size = this.getElementSize()
 
-    if (this.isDirectionVertical()) {
+    if (isDirectionVertical(this.props.direction)) {
       this.NEGATIVE_SCROLL = size - element.scrollHeight - this.MAX_NEGATIVE_SCROLL
     } else {
       this.NEGATIVE_SCROLL = size - element.scrollWidth - this.MAX_NEGATIVE_SCROLL
@@ -240,7 +242,7 @@ export default class Drawer extends Component {
 
     if (this.MOVING_POSITION === 0) return false
 
-    return this.isDirectionVertical()
+    return isDirectionVertical(this.props.direction)
       ? this.NEW_POSITION >= 0 && this.MOVING_POSITION - start > this.SCROLL_TO_CLOSE
       : this.NEW_POSITION >= 0 && start - this.MOVING_POSITION > this.SCROLL_TO_CLOSE
   }
@@ -248,17 +250,13 @@ export default class Drawer extends Component {
   getDrawerTransform = value => {
     const { direction } = this.props
 
-    return this.isDirectionVertical() ? {transform: `translate3d(0, ${value}px, 0)`} : {transform: `translate3d(-${value}px, 0, 0)`}
+    return isDirectionVertical(direction) ? {transform: `translate3d(0, ${value}px, 0)`} : {transform: `translate3d(-${value}px, 0, 0)`}
   }
 
   getElementSize = () => {
     if (isClientSide()) {
-      return this.isDirectionVertical() ? window.innerHeight : window.innerWidth
+      return isDirectionVertical(this.props.direction) ? window.innerHeight : window.innerWidth
     }
-  }
-
-  isDirectionVertical = () => {
-    return this.props.direction === 'y'
   }
 
   inViewportChange = inView => {
@@ -349,7 +347,3 @@ const HaveWeScrolled = css`
   height: 1px;
   width: 100%;
 `
-
-function isClientSide () {
-  return typeof window !== 'undefined'
-}

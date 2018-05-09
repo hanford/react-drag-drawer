@@ -10,7 +10,7 @@ class Demo extends PureComponent {
     regular: false,
     sidebar: false,
     asyncHeight: false,
-    crazyStyle: SVGFEGaussianBlurElement
+    crazyStyle: false
   }
 
   toggle = (type, value) => event => {
@@ -212,7 +212,7 @@ class AsyncHeightDrawer extends PureComponent {
 
   render () {
     return (
-      <Drawer kinetic={true} {...this.props}>
+      <Drawer {...this.props}>
         <div className={Card}>
           <button className={Toggle} onClick={this.props.onRequestClose}>Close drawer</button>
           <br />

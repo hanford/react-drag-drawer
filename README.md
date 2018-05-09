@@ -4,8 +4,8 @@
 
 > Mobile draggable drawer that falls back to modals on desktop
 
-[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/npm-package
+[npm-badge]: https://img.shields.io/npm/v/react-drag-drawer.png?style=flat-square
+[npm]: https://www.npmjs.org/package/react-drag-drawer
 
 [Live demo!](https://react-drag-drawer.jackhanford.com)
 
