@@ -101,7 +101,7 @@ export default class Drawer extends Component {
   attachListeners = (drawer) => {
     const { dontApplyListeners, getModalRef, direction } = this.props
     const { listenersAttached } = this.state
-
+    console.log('ATTACH LISTENERS')
     // only attach listeners once as this function gets called every re-render
     if (!drawer || listenersAttached || dontApplyListeners) return
 
@@ -163,7 +163,6 @@ export default class Drawer extends Component {
 
     const movingPosition = isDirectionBottom(this.props.direction) || isDirectionTop(this.props.direction) ? pageY : pageX
     const delta = movingPosition - thumb
-
     const newPosition = isDirectionBottom(this.props.direction) || isDirectionTop(this.props.direction) ? position + delta : position - delta
 
     if (newPosition > 0 && this.ALLOW_DRAWER_TRANSFORM) {
@@ -289,7 +288,7 @@ export default class Drawer extends Component {
       return hiddenPosition - position
     }
     else{
-      return 0
+      return position
     }
   }
 

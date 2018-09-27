@@ -160,7 +160,7 @@ render () {
           open={sidebar}
           onRequestClose={this.toggle('sidebar', false)}
           modalElementClass={Sidebar}
-          direction='left'
+          direction='right'
         >
           <div className={Card}>
             I'm a sidebar drawer
