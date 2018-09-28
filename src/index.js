@@ -118,10 +118,6 @@ export default class Drawer extends Component {
       position = drawer.scrollWidth
     }
 
-    else if(isDirectionTop(direction)){
-      position = drawer.scrollHeight
-    }
-
     this.setState({ listenersAttached: true, position }, () => {
       setTimeout(() => {
         // trigger reflow so webkit browsers calculate height properly 😔
@@ -168,7 +164,7 @@ export default class Drawer extends Component {
 
     const movingPosition = isDirectionBottom(direction) || isDirectionTop(direction) ? pageY : pageX
     const delta = movingPosition - thumb
-    const newPosition = isDirectionBottom(direction) || isDirectionTop(direction) ? position + delta : position - delta
+    const newPosition = isDirectionBottom(direction) ? position + delta : position - delta
 
     if (newPosition > 0 && this.ALLOW_DRAWER_TRANSFORM) {
       // stop android's pull to refresh behavior
@@ -179,17 +175,14 @@ export default class Drawer extends Component {
       // value in time
       this.MOVING_POSITION = movingPosition
       this.NEW_POSITION = newPosition
-      
+
       var positionThreshold = 0;
 
-      if(isDirectionRight(direction)){
+      if (isDirectionRight(direction)) {
         positionThreshold = this.drawer.scrollWidth
       }
-      else if(isDirectionTop(direction)){
-        positionThreshold = this.drawer.scrollHeight
-      }
 
-     // const positionThreshold = isDirectionLeft(direction) ? 0 : this.drawer.scrollWidth
+      // const positionThreshold = isDirectionLeft(direction) ? 0 : this.drawer.scrollWidth
 
       if (newPosition < positionThreshold && this.shouldWeCloseDrawer()) {
         this.props.notifyWillClose(true)
@@ -224,11 +217,8 @@ export default class Drawer extends Component {
       //TODO: POSITION IS SET TO DRAWER WIDTH IN CASE OF RIGHT DIRECTION
       var newPosition = 0;
 
-      if(isDirectionRight(direction)){
+      if (isDirectionRight(direction)) {
         newPosition = this.drawer.scrollWidth
-      }
-      else if(isDirectionTop(direction)){
-        newPosition = this.drawer.scrollHeight
       }
 
       this.setState(() => {
@@ -255,11 +245,8 @@ export default class Drawer extends Component {
 
     var defaultPosition = 0
 
-    if(isDirectionRight(direction)){
+    if (isDirectionRight(direction)) {
       defaultPosition = this.drawer.scrollWidth
-    }
-    else if(isDirectionTop(direction)){
-      defaultPosition = this.drawer.scrollHeight
     }
 
     if (allowClose === false) {
@@ -291,11 +278,8 @@ export default class Drawer extends Component {
 
     var initialPosition = 0
 
-    if(isDirectionRight(direction)){
+    if (isDirectionRight(direction)) {
       initialPosition = this.drawer.scrollWidth
-    }
-    else if(isDirectionTop(direction)){
-      initialPosition = this.drawer.scrollHeight
     }
 
     if (this.MOVING_POSITION === initialPosition) return false
@@ -304,6 +288,9 @@ export default class Drawer extends Component {
       return this.NEW_POSITION < initialPosition && this.MOVING_POSITION - touchStart > this.SCROLL_TO_CLOSE
     }
     else if (isDirectionLeft(direction)) {
+      return this.NEW_POSITION >= initialPosition && touchStart - this.MOVING_POSITION > this.SCROLL_TO_CLOSE
+    }
+    else if (isDirectionTop(direction)) {
       return this.NEW_POSITION >= initialPosition && touchStart - this.MOVING_POSITION > this.SCROLL_TO_CLOSE
     }
     else {
