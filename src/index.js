@@ -182,8 +182,6 @@ export default class Drawer extends Component {
         positionThreshold = this.drawer.scrollWidth
       }
 
-      // const positionThreshold = isDirectionLeft(direction) ? 0 : this.drawer.scrollWidth
-
       if (newPosition < positionThreshold && this.shouldWeCloseDrawer()) {
         this.props.notifyWillClose(true)
       } else {
@@ -195,7 +193,7 @@ export default class Drawer extends Component {
         this.setState(() => {
           return {
             thumb: movingPosition,
-            position: newPosition
+            position: positionThreshold > 0 ? Math.min(newPosition, positionThreshold) : newPosition
           }
         })
       }
