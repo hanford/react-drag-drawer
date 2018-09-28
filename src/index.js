@@ -212,7 +212,6 @@ export default class Drawer extends Component {
     if (this.shouldWeCloseDrawer()) {
       this.hideDrawer()
     } else {
-      //TODO: POSITION IS SET TO DRAWER WIDTH IN CASE OF RIGHT DIRECTION
       var newPosition = 0;
 
       if (isDirectionRight(direction)) {
