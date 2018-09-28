@@ -374,7 +374,7 @@ export default class Drawer extends Component {
           return (
             <div
               id={id}
-              style={{ backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, overflow: 'hidden' }}
+              style={{ backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, overflowX: 'hidden' }}
               onClick={this.hideDrawer}
               className={`${Container} ${containerElementClass}`}
               ref={getContainerRef}
