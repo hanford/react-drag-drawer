@@ -19,6 +19,11 @@
     "test:watch": "nwb test-react --server",
     "prepublishOnly": "npm run build"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "dependencies": {
     "emotion": "~9.1.2",
     "global": "~4.3.2",
@@ -31,7 +36,10 @@
     "react": "16.x"
   },
   "devDependencies": {
+    "husky": "^1.1.0",
     "nwb": "0.21.x",
+    "prettier": "^1.14.3",
+    "pretty-quick": "^1.7.0",
     "react": "~16.2.0",
     "react-dom": "~16.2.0",
     "react-github-badge": "~0.4.0"
