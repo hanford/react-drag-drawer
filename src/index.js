@@ -358,6 +358,20 @@ export default class Drawer extends Component {
 
     const position = this.getPosition(hiddenPosition)
 
+    // Style object for the container element
+    let containerStyle = {
+      backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`
+    }
+
+    // If direction is right, we set the overflowX property to 'hidden' to hide the x scrollbar during
+    // the sliding animation
+    if (isDirectionRight(direction)) {
+      containerStyle = {
+        ...containerStyle,
+        overflowX: 'hidden'
+      }
+    }
+
     return createPortal(
       <Motion
         style={{
@@ -371,9 +385,9 @@ export default class Drawer extends Component {
           return (
             <div
               id={id}
-              style={{ backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, overflowX: isDirectionRight(direction) ? 'hidden' : 'visible'}}
+              style={containerStyle}
               onClick={this.hideDrawer}
-              className={`${Container} ${containerElementClass}`}
+              className={`${Container} ${containerElementClass} `}
               ref={getContainerRef}
             >
               <Observer className={HaveWeScrolled} onChange={this.inViewportChange} />
@@ -396,27 +410,27 @@ export default class Drawer extends Component {
 }
 
 const Container = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
 
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-  align-items: center;
+      display: flex;
+      justify - content: center;
+      flex - shrink: 0;
+      align - items: center;
 
-  z-index: 11;
-  transition: background-color 0.2s linear;
+      z - index: 11;
+      transition: background - color 0.2s linear;
 
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-`
+      overflow - y: auto;
+      -webkit - overflow - scrolling: touch;
+      `
 
 const HaveWeScrolled = css`
-  position: absolute;
-  top: 0;
-  height: 1px;
-  width: 100%;
-`
+      position: absolute;
+      top: 0;
+      height: 1px;
+      width: 100 %;
+      `
