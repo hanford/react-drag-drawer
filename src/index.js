@@ -71,6 +71,17 @@ export default class Drawer extends Component {
   SCROLL_TO_CLOSE = 75;
   ALLOW_DRAWER_TRANSFORM = true;
 
+  componentDidMount() {
+    if (this.props.direction === "y")
+      console.warning(
+        "Direction prop is now takes up or down, y is no longer supported!"
+      );
+    if (this.props.direction === "x")
+      console.warning(
+        "Direction prop is now takes left or right, x is no longer supported!"
+      );
+  }
+
   componentDidUpdate(prevProps, nextState) {
     // in the process of closing the drawer
     if (!this.props.open && prevProps.open) {
