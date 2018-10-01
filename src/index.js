@@ -176,7 +176,7 @@ export default class Drawer extends Component {
       this.MOVING_POSITION = movingPosition
       this.NEW_POSITION = newPosition
 
-      var positionThreshold = 0;
+      let positionThreshold = 0;
 
       if (isDirectionRight(direction)) {
         positionThreshold = this.drawer.scrollWidth
@@ -212,7 +212,7 @@ export default class Drawer extends Component {
     if (this.shouldWeCloseDrawer()) {
       this.hideDrawer()
     } else {
-      var newPosition = 0;
+      let newPosition = 0;
 
       if (isDirectionRight(direction)) {
         newPosition = this.drawer.scrollWidth
@@ -240,7 +240,7 @@ export default class Drawer extends Component {
   hideDrawer = () => {
     const { allowClose, onRequestClose, direction } = this.props
 
-    var defaultPosition = 0
+    let defaultPosition = 0
 
     if (isDirectionRight(direction)) {
       defaultPosition = this.drawer.scrollWidth
@@ -273,7 +273,7 @@ export default class Drawer extends Component {
     const { start: touchStart } = this.state
     const { direction } = this.props;
 
-    var initialPosition = 0
+    let initialPosition = 0
 
     if (isDirectionRight(direction)) {
       initialPosition = this.drawer.scrollWidth
