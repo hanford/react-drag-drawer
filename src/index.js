@@ -339,7 +339,7 @@ export default class Drawer extends Component {
   stopPropagation = event => event.stopPropagation()
 
   render() {
-    const { containerElementClass, dontApplyListeners, id, getContainerRef, getModalRef } = this.props
+    const { containerElementClass, dontApplyListeners, id, getContainerRef, getModalRef, direction } = this.props
 
     const open = this.state.open && this.props.open
 
@@ -371,7 +371,7 @@ export default class Drawer extends Component {
           return (
             <div
               id={id}
-              style={{ backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, overflowX: 'hidden' }}
+              style={{ backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`, overflowX: isDirectionRight(direction) ? 'hidden' : 'visible'}}
               onClick={this.hideDrawer}
               className={`${Container} ${containerElementClass}`}
               ref={getContainerRef}
