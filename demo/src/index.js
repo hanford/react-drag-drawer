@@ -8,7 +8,8 @@ import Drawer from '../../src'
 class Demo extends PureComponent {
   state = {
     regular: false,
-    sidebar: false,
+    sidebarLeft: false,
+    sidebarRight: false,
     asyncHeight: false,
     crazyStyle: false
   }
@@ -21,8 +22,8 @@ class Demo extends PureComponent {
     })
   }
 
-  render () {
-    const { regular, sidebar, asyncHeight, crazyStyle } = this.state
+  render() {
+    const { regular, sidebarLeft, sidebarRight, asyncHeight, crazyStyle } = this.state
 
     return (
       <div className={`${Reset} ${Container}`}>
@@ -36,7 +37,7 @@ class Demo extends PureComponent {
         <Info>react-drag-drawer is a lightweight, performant, drawer/modal component that can be dragged close. The animations are done with react-motion so they feel very natural</Info>
         <button onClick={this.toggle('regular', true)} className={Toggle}>Open example</button>
         <pre className={Code}>
-        {`import Drawer from 'react-drag-drawer'
+          {`import Drawer from 'react-drag-drawer'
 
 ..
 
@@ -67,16 +68,33 @@ render () {
         <div className={Break} />
 
         <Info>You can also use react-drag-drawer to build sidebars by simply changing the `direction` prop</Info>
-        <button onClick={this.toggle('sidebar', true)} className={Toggle}>Sidebar</button>
+        <button onClick={this.toggle('sidebarLeft', true)} className={Toggle}>Left Sidebar</button>
         <pre className={Code}>
-        {`import Drawer from 'react-drag-drawer'
+          {`import Drawer from 'react-drag-drawer'
 
 ..
 
 <Drawer
   open={true}
   onRequestClose={this.toggle}
-  direction='x'
+  direction='left'
+>
+  <div>Hey Im inside a drawer!</div>
+</Drawer>
+        `}
+        </pre>
+
+        <Info>Sidebar can be displayed also on the right side</Info>
+        <button onClick={this.toggle('sidebarRight', true)} className={Toggle}>Right Sidebar</button>
+        <pre className={Code}>
+          {`import Drawer from 'react-drag-drawer'
+
+..
+
+<Drawer
+  open={true}
+  onRequestClose={this.toggle}
+  direction='right'
 >
   <div>Hey Im inside a drawer!</div>
 </Drawer>
@@ -87,7 +105,7 @@ render () {
         <Info>react-drag-drawer assumes nothing about your styles and is left entirely up to you how you want to style it</Info>
         <button onClick={this.toggle('crazyStyle', true)} className={Toggle}>Different style</button>
         <pre className={Code}>
-        {`import Drawer from 'react-drag-drawer'
+          {`import Drawer from 'react-drag-drawer'
 
 ..
 
@@ -104,7 +122,7 @@ render () {
 
         <Info>You can conditionally apply event listeners by using the dontApplyListeners prop</Info>
         <pre className={Code}>
-        {`import Drawer from 'react-drag-drawer'
+          {`import Drawer from 'react-drag-drawer'
 
 ..
 
@@ -122,7 +140,7 @@ render () {
         <Info>react-drag-drawer has a <a target='_blank' href='https://github.com/hanford/react-drag-drawer#api'>small but extensive API</a> that allows for some very cool customizations. The code for this website can be found <a href='https://github.com/hanford/react-drag-drawer/blob/master/demo/src/index.js' targert='_blank'>on github.</a></Info>
 
         <pre className={Code}>
-        {`import Drawer from 'react-drag-drawer'
+          {`import Drawer from 'react-drag-drawer'
 
 ..
 
@@ -135,7 +153,7 @@ render () {
   modalElementClass='card'
   containerElementClass='my-shade'
   parentElement={document.body} // element to be appended to
-  direction='y'
+  direction='bottom'
   inViewportChange={atTopOfViewport => console.log({ atTopOfViewport })}
   getModalRef={ref => console.log({ ref })}
   getContainerRef={ref => console.log({ ref })}
@@ -157,14 +175,26 @@ render () {
         </Drawer>
 
         <Drawer
-          open={sidebar}
-          onRequestClose={this.toggle('sidebar', false)}
+          open={sidebarLeft}
+          onRequestClose={this.toggle('sidebarLeft', false)}
           modalElementClass={Sidebar}
-          direction='x'
+          direction='left'
         >
           <div className={Card}>
             I'm a sidebar drawer
-            <button className={Toggle} onClick={this.toggle('sidebar', false)}>Close drawer</button>
+            <button className={Toggle} onClick={this.toggle('sidebarLeft', false)}>Close drawer</button>
+          </div>
+        </Drawer>
+
+        <Drawer
+          open={sidebarRight}
+          onRequestClose={this.toggle('sidebarRight', false)}
+          modalElementClass={Sidebar}
+          direction='right'
+        >
+          <div className={Card}>
+            I'm a sidebar drawer
+            <button className={Toggle} onClick={this.toggle('sidebarRight', false)}>Close drawer</button>
           </div>
         </Drawer>
 
@@ -196,7 +226,7 @@ class AsyncHeightDrawer extends PureComponent {
     asyncData: []
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.open === false && nextProps.open === true) {
       setTimeout(() => {
         const newArray = new Array(500).fill(true)
@@ -210,7 +240,7 @@ class AsyncHeightDrawer extends PureComponent {
     }
   }
 
-  render () {
+  render() {
     return (
       <Drawer {...this.props}>
         <div className={Card}>
@@ -350,4 +380,4 @@ const Code = css`
   -webkit-overflow-scrolling: touch;
 `
 
-render(<Demo/>, document.querySelector('#demo'))
+render(<Demo />, document.querySelector('#demo'))
