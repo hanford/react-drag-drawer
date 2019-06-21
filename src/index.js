@@ -73,11 +73,11 @@ export default class Drawer extends Component {
 
   componentDidMount() {
     if (this.props.direction === "y")
-      console.warning(
+      console.warn(
         "Direction prop is now takes up or down, y is no longer supported!"
       );
     if (this.props.direction === "x")
-      console.warning(
+      console.warn(
         "Direction prop is now takes left or right, x is no longer supported!"
       );
   }
