@@ -37,6 +37,7 @@ export default class Drawer extends Component {
       PropTypes.object,
       PropTypes.string
     ]),
+    containerOpacity: Proptypes.number,
     containerElementClass: PropTypes.string,
     getContainerRef: PropTypes.func,
     getModalRef: PropTypes.func
@@ -50,6 +51,7 @@ export default class Drawer extends Component {
     onRequestClose: () => {},
     getContainerRef: () => {},
     getModalRef: () => {},
+    containerOpacity : 0.6,
     direction: "bottom",
     parentElement: document.body,
     allowClose: true,
@@ -379,11 +381,13 @@ export default class Drawer extends Component {
   render() {
     const {
       containerElementClass,
+      containerOpacity,
       dontApplyListeners,
       id,
       getContainerRef,
       getModalRef,
-      direction
+      direction,
+      
     } = this.props;
 
     const open = this.state.open && this.props.open;
@@ -407,7 +411,7 @@ export default class Drawer extends Component {
 
     // Style object for the container element
     let containerStyle = {
-      backgroundColor: `rgba(55, 56, 56, ${open ? 0.6 : 0})`
+      backgroundColor: `rgba(55, 56, 56, ${open ? containerOpacity : 0})`
     };
 
     // If direction is right, we set the overflowX property to 'hidden' to hide the x scrollbar during
