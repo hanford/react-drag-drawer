@@ -1,6 +1,6 @@
 {
   "name": "react-drag-drawer",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Draggable react drawer",
   "main": "lib/index.js",
   "module": "es/index.js",
