@@ -37,7 +37,7 @@ export default class Drawer extends Component {
       PropTypes.object,
       PropTypes.string
     ]),
-    containerOpacity: Proptypes.number,
+    containerOpacity: PropTypes.number,
     containerElementClass: PropTypes.string,
     getContainerRef: PropTypes.func,
     getModalRef: PropTypes.func
