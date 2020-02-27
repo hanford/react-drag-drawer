@@ -51,7 +51,7 @@ export default class Drawer extends Component {
     onRequestClose: () => {},
     getContainerRef: () => {},
     getModalRef: () => {},
-    containerOpacity : 0.6,
+    containerOpacity: 0.6,
     direction: "bottom",
     parentElement: document.body,
     allowClose: true,
@@ -343,7 +343,7 @@ export default class Drawer extends Component {
     } else if (isDirectionTop(direction)) {
       return { transform: `translate3d(0, -${value}px, 0)` };
     } else if (isDirectionLeft(direction)) {
-      return { transform: `translate3d(-${value}px, 0, 0)` };
+      return { transform: `translate3d(-${Math.abs(value)}px, 0, 0)` };
     } else if (isDirectionRight(direction)) {
       return { transform: `translate3d(${value}px, 0, 0)` };
     }
@@ -386,8 +386,7 @@ export default class Drawer extends Component {
       id,
       getContainerRef,
       getModalRef,
-      direction,
-      
+      direction
     } = this.props;
 
     const open = this.state.open && this.props.open;
@@ -401,9 +400,11 @@ export default class Drawer extends Component {
 
     const { touching } = this.state;
 
-    const animationSpring = touching
-      ? { damping: 20, stiffness: 300 }
-      : presets.stiff;
+    const springPreset = isDirectionLeft(direction)
+      ? { damping: 17, stiffness: 120 }
+      : { damping: 20, stiffness: 300 };
+
+    const animationSpring = touching ? springPreset : presets.stiff;
 
     const hiddenPosition = this.getElementSize();
 
