@@ -7,14 +7,13 @@
 [npm-badge]: https://img.shields.io/npm/v/react-drag-drawer.png?style=flat-square
 [npm]: https://www.npmjs.org/package/react-drag-drawer
 
-[Live demo!](https://react-drag-drawer.jackhanford.com)
+[Live demo!](https://react-drag-drawer.now.sh)
 
 ## Install
 
 ```
 $ npm install react-drag-drawer --save
 ```
-
 
 ## Usage
 
@@ -46,25 +45,27 @@ render () {
 ![](http://d.pr/i/ThqP+)
 
 ## API
-| Param          | Type    | functionality | required |
-|----------------|---------|-----------------|-----------------|
-| open           | Boolean | null | true |
-| children       | Node    | null | true |
-| onRequestClose | Function| null | true |
-| onDrag | Function| invoked on drag | false |
-| onOpen | Function| invoked on drawer focus | false |
-| notifyWillClose | Function| notify consumer if the drawer will close at touch release | false |
-| allowClose | Boolean | block closing if allowClose={false}, default is true | false |
-| modalElementClass | String | className to be applied to top <Drawer> element | false |
-| containerElementClass | String | className to be applied to the drawer container element | false |
-| parentElement | ref | block scrolls on element if you're not using body scrolling | false |
-| direction | String | direction to translate drawer | false |
-| dontApplyListeners | Boolean | skip applying internal event listeners to the dom | false |
-| inViewportChange | Function | detect when drawer is at top of viewport | false |
-| getModalRef | Function | get modal (draggable element) ref | false |
-| getContainerRef | Function | get container (overlay) ref | false |
+
+| Param                 | Type     | functionality                                               | required |
+| --------------------- | -------- | ----------------------------------------------------------- | -------- |
+| open                  | Boolean  | null                                                        | true     |
+| children              | Node     | null                                                        | true     |
+| onRequestClose        | Function | null                                                        | true     |
+| onDrag                | Function | invoked on drag                                             | false    |
+| onOpen                | Function | invoked on drawer focus                                     | false    |
+| notifyWillClose       | Function | notify consumer if the drawer will close at touch release   | false    |
+| allowClose            | Boolean  | block closing if allowClose={false}, default is true        | false    |
+| modalElementClass     | String   | className to be applied to top <Drawer> element             | false    |
+| containerElementClass | String   | className to be applied to the drawer container element     | false    |
+| parentElement         | ref      | block scrolls on element if you're not using body scrolling | false    |
+| direction             | String   | direction to translate drawer                               | false    |
+| dontApplyListeners    | Boolean  | skip applying internal event listeners to the dom           | false    |
+| inViewportChange      | Function | detect when drawer is at top of viewport                    | false    |
+| getModalRef           | Function | get modal (draggable element) ref                           | false    |
+| getContainerRef       | Function | get container (overlay) ref                                 | false    |
 
 Example modal style
+
 ```css
 .modal {
   outline: none;
